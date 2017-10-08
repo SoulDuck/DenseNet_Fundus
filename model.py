@@ -289,8 +289,9 @@ class DenseNet:
         for step in range(max_iter):
             batch_xs ,batch_ys , batch_fs = self.get_batches_from_tensor(sess=self.sess  , images=self._images_tensor_list,\
                                                                          labels=self._labels_tensor_list , filenames=self._fnames_tensor_list )
-            print batch_ys
             batch_ys=input.cls_to_onehot(batch_ys , self.n_classes )
+            batch_xs , batch_ys=input.batch_shuffle(batch_xs , batch_ys)
+            print batch_ys
             print batch_ys
             feed_dict = {
                 #self._images_tensor_list , self._labels_tensor_list , self._fnames_tensor_list

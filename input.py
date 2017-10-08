@@ -1,6 +1,25 @@
 #-*- coding:utf-8 -*-
 import tensorflow  as tf
 import numpy as np
+import random
+def batch_shuffle(images , labels , filenames):
+    indices=np.random.permutation(len(labels))
+
+    images=images[indices]
+    labels=labels[indices]
+
+    if filenames is not  None:
+        filenames=filenames[indices]
+        return images , labels , filenames
+
+    return images , labels
+
+
+
+
+
+
+
 
 def cls_to_onehot(cls , depth):
     onehot=np.zeros([len(cls) , depth])
