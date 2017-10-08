@@ -19,7 +19,7 @@ class DenseNet:
                  **kwargs):
         print kwargs
 
-        self.logs_path='./log/'
+        self.logs_path='./logs/'
 
         """from input"""
         print 'model'
@@ -89,7 +89,7 @@ class DenseNet:
         if TF_VERSION <= 0.10:
             self.sess.run(tf.initialize_all_variables())
             logswriter = tf.train.SummaryWriter
-            logswriter.add_graph
+
         else:
             init=tf.group(tf.global_variables_initializer() , tf.local_variables_initializer())
             self.sess.run(init)
