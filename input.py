@@ -111,6 +111,8 @@ def cls_to_onehot(indices,cls, n_classes):
 
 
 def get_batch_tensor():
+
+
     """
 
     아래 줄이 반드시 정의 되어 있어야 합니다
@@ -126,10 +128,10 @@ def get_batch_tensor():
     이 정의되어 있어야 합니다
 
     """
-
-
     fetches=['normal_0' , 'glaucoma', 'retina','cataract','cataract_glaucoma','retina_cataract','retina_glaucoma']
     batches=[10,10,10 ,10 ,10,10]
+    assert len(fetches) == len(batches)
+
     fb=zip(fetches , batches)
     images=[]
     labels=[]
@@ -144,7 +146,6 @@ def get_batch_tensor():
         filenames.append(fnames)
     print 'Done'
     return images, labels,filenames
-
 """
 for i in xrange(2):
     imgs_labs_fnames=zip(images , labels , filenames)
