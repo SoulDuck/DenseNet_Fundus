@@ -129,7 +129,7 @@ def get_batch_tensor():
 
     """
     fetches=['normal_0' , 'glaucoma', 'retina','cataract','cataract_glaucoma','retina_cataract','retina_glaucoma']
-    batches=[10,10,10 ,10 ,10,10]
+    batches=[10,10,10 ,10 ,10,10,10]
     assert len(fetches) == len(batches)
 
     fb=zip(fetches , batches)
