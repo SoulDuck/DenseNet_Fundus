@@ -2,7 +2,7 @@
 import tensorflow  as tf
 import numpy as np
 import random
-def batch_shuffle(images , labels , filenames):
+def batch_shuffle(images , labels , filenames=None):
     indices=np.random.permutation(len(labels))
 
     images=images[indices]
