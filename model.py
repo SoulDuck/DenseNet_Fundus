@@ -89,7 +89,6 @@ class DenseNet:
         if TF_VERSION <= 0.10:
             self.sess.run(tf.initialize_all_variables())
             logswriter = tf.train.SummaryWriter
-
         else:
             init=tf.group(tf.global_variables_initializer() , tf.local_variables_initializer())
             self.sess.run(init)
@@ -287,7 +286,7 @@ class DenseNet:
 
     def training(self  , learning_rate):
         max_iter=100
-        for i in range(max_iter):
+        for step in range(max_iter):
             batch_xs ,batch_ys , batch_fs = self.get_batches_from_tensor(sess=self.sess  , images=self._images_tensor_list,\
                                                                          labels=self._labels_tensor_list , filenames=self._fnames_tensor_list )
             print batch_ys
@@ -301,7 +300,7 @@ class DenseNet:
                 self.is_training: True}
             fetches = [self.train_step, self.cross_entropy, self.accuracy]
             _,loss, accuracy=self.sess.run(fetches=fetches, feed_dict=feed_dict)
-            print loss , accuracy
+            self.log_loss_accuracy(loss=loss , accuracy=accuracy ,epoch = step, prefix='per_batch')
         self.coord.request_stop()
         self.coord.join(threads=self.threads)
 
