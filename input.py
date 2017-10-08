@@ -6,7 +6,7 @@ def cls_to_onehot(cls , depth):
     onehot=np.zeros([len(cls) , depth])
 
     for i in range(len(cls)):
-        onehot[i , cls]=1
+        onehot[i , cls[i]]=1
     return onehot
 
 def read_one_example( tfrecord_path , batch_size , resize ):
