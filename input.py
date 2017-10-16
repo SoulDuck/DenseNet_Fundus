@@ -333,9 +333,25 @@ for i in xrange(2):
 
 def get_batches_from_tensor(sess ,images , labels , filenames ):
     imgs, labs, fnames = sess.run([images, labels, filenames])
+    imgs_labs_fnames=zip(imgs,labs ,fnames)
+    for i,(img,lab,fname) in enumerate(imgs_labs_fnames):
+        if i ==0 :
+            tmp_imgs = img
+            tmp_labs = lab
+            tmp_fnames = fname
+        else:
+            tmp_imgs=np.vstack((tmp_imgs ,img))
+            tmp_labs=np.hstack((tmp_labs ,lab))
+            tmp_fnames = np.hstack((tmp_fnames, fname))
+    imgs=tmp_imgs
+    labs=tmp_labs
+    fnames=tmp_fnames
     imgs = np.asarray(imgs).reshape([-1, 299, 299, 3])
     labs = np.asarray(labs).reshape([-1])
+    fnames = np.asarray(fnames).reshape([-1])
 
+    assert len(imgs)==len(labs) == len(fnames) , '# images : {} , # labels {} , # filenames : {}'.format(len(imgs) , len(labs) , len(fnames
+                                                                                                                                     ))
     return imgs, labs, fnames
 
 
