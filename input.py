@@ -8,11 +8,12 @@ import glob
 from PIL import Image
 import random
 def get_fundus_train_test_set(src_name , src_paths , src_labels , random_shuffle=True):
-    assert len(src_paths) == len(src_labels)
+    random.seed(123)
+    assert len(src_paths) == len(src_labels) and len(src_paths) != 0
     if random_shuffle ==True:
-        indices=np.random.permutation(len(src_labels))
-        src_paths=src_paths[indices]
-        src_labels=src_labels[indices]
+        random.shuffle(src_paths)
+        random.shuffle(src_labels)
+
 
     # 여기서 테스트 셋과 트레이닝 세트의 비율을 정합니다
     if src_name == 'glaucoma':
