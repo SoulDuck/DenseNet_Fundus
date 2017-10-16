@@ -60,6 +60,8 @@ def make_fundus_tfrecords(root_folder , src_folder_names , src_labels , save_fol
 
         target_src_paths=glob.glob(os.path.join(subdir_path , extension))
         target_src_labels=np.zeros(len(target_src_paths))
+        target_src_labels.fill(src_labels[i])
+        print 'name : ',src_folder_names[i] , 'label : ',src_labels[i]
         target_saved_folder=os.path.join(save_folder , src_folder_names[i])
         train_img_paths , train_labs , test_img_paths , test_labs=get_fundus_train_test_set(src_folder_names[i] , src_paths= target_src_paths, \
                                                                                   src_labels=target_src_labels  , random_shuffle=True)

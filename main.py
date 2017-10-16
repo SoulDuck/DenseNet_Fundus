@@ -47,7 +47,9 @@ if args.model_type == 'Densenet':
     args.reduction = 1.0
 elif args.model_type=='DenseNet-BC':
     args.bc_mode=True
-
+src_folder_names=['normal_0' , 'normal_1','glaucoma', 'cataract', 'retina','retina_glaucoma','retina_cataract','cataract_glaucoma']
+src_labels=[1,1,0,0,0,0,0,0]
+input.make_fundus_tfrecords(root_folder='./dataset' , src_folder_names=src_folder_names , src_labels=src_labels)
 model_params = vars(args)
 densenet=model.DenseNet(**model_params)
 densenet.training(learning_rate=0.1)
