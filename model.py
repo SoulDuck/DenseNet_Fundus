@@ -43,10 +43,8 @@ class DenseNet:
         self.should_save_model = should_save_model
         self.renew_logs = renew_logs
         self.reduction = reduction
-
         self.bc_mode = bc_mode
         # compression rate at the transition layers
-
         if not bc_mode:
             print "Build %s model with %d blocks %d composite layers each" % (
             model_type, self.total_blocks, self.layers_per_block)
@@ -58,7 +56,6 @@ class DenseNet:
             print self.total_blocks
             print "Build %s model with %d blocks ,  %d bottleneck layers and %d composite layers each." \
                   % (model_type, self.total_blocks, self.layers_per_block, self.layers_per_block)
-
         print "Reduction at transition layers : %.1f" % self.reduction
 
         ##함수 실행부##
@@ -289,6 +286,8 @@ class DenseNet:
         for step in range(max_iter):
             batch_xs ,batch_ys , batch_fs = self.get_batches_from_tensor(sess=self.sess  , images=self._images_tensor_list,\
                                                                          labels=self._labels_tensor_list , filenames=self._fnames_tensor_list )
+            print np.shape(batch_xs)
+            print np.shape(batch_ys)
             batch_ys=input.cls_to_onehot(batch_ys , self.n_classes )
             batch_xs , batch_ys=input.batch_shuffle(batch_xs , batch_ys)
 

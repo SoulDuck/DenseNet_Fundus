@@ -30,10 +30,12 @@ parser.add_argument('--not_renew_logs' , dest='renew_logs' , action='store_false
 parser.set_defaults(renew_logs=False)
 args=parser.parse_args()
 
+
 ### 임시적으로 사용함 ###
 # args.test=True
 args.dataset = 'Fundus'
 args.total_blocks=7
+
 
 if not args.keep_prob:
     if args.dataset in ['C10' , 'C100'  , 'SVHN' , 'Fundus']:
@@ -45,11 +47,8 @@ if args.model_type == 'Densenet':
     args.reduction = 1.0
 elif args.model_type=='DenseNet-BC':
     args.bc_mode=True
-
-
 model_params = vars(args)
 densenet=model.DenseNet(**model_params)
-
 densenet.training(learning_rate=0.1)
 
 

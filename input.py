@@ -2,6 +2,8 @@
 import tensorflow  as tf
 import numpy as np
 import random
+
+
 def batch_shuffle(images , labels , filenames=None):
     indices=np.random.permutation(len(labels))
 
@@ -13,12 +15,6 @@ def batch_shuffle(images , labels , filenames=None):
         return images , labels , filenames
 
     return images , labels
-
-
-
-
-
-
 
 
 def cls_to_onehot(cls , depth):
@@ -147,8 +143,10 @@ def get_batch_tensor():
     이 정의되어 있어야 합니다
 
     """
-    fetches=['normal_0' , 'glaucoma', 'retina','cataract','cataract_glaucoma','retina_cataract','retina_glaucoma']
-    batches=[10,10,10 ,10 ,10,10,10]
+
+    fetches = ['normal_0', 'glaucoma', 'retina', 'cataract', 'cataract_glaucoma', 'retina_cataract',
+                   'retina_glaucoma']
+    batches=[30,14,14,6,4,3,3]
     assert len(fetches) == len(batches)
 
     fb=zip(fetches , batches)
