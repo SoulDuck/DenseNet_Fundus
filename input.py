@@ -295,7 +295,11 @@ def get_batch_tensor(mode):
         print 'name:',f ,'\tbatch:',b
         tfrecord_path = tf.gfile.Glob('dataset'+'/*%s.tfrecord'%f)
         print tfrecord_path
-        imgs , labs , fnames = get_shuffled_batch(tfrecord_path , batch_size=b , resize=(299,299))
+        if mode == 'train':
+            imgs , labs , fnames = get_shuffled_batch(tfrecord_path , batch_size=b , resize=(299,299))
+        elif mode == 'test':
+            raise NotImplementedError
+
         images.append(imgs)
         labels.append(labs)
         filenames.append(fnames)

@@ -283,11 +283,10 @@ class DenseNet:
 
     def training(self  , learning_rate):
         max_iter=100
+
         for step in range(max_iter):
             batch_xs ,batch_ys , batch_fs = self.get_batches_from_tensor(sess=self.sess  , images=self._images_tensor_list,\
                                                                          labels=self._labels_tensor_list , filenames=self._fnames_tensor_list )
-            print np.shape(batch_xs)
-            print np.shape(batch_ys)
             batch_ys=input.cls_to_onehot(batch_ys , self.n_classes )
             batch_xs , batch_ys=input.batch_shuffle(batch_xs , batch_ys)
 
@@ -303,7 +302,3 @@ class DenseNet:
             self.log_loss_accuracy(loss=loss , accuracy=accuracy ,epoch = step, prefix='per_batch')
         self.coord.request_stop()
         self.coord.join(threads=self.threads)
-
-
-
-
