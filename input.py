@@ -256,7 +256,7 @@ def cls_to_onehot(indices,cls, n_classes):
 """
 
 
-def get_batch_tensor():
+def get_batch_tensor(mode):
 
 
     """
@@ -277,6 +277,12 @@ def get_batch_tensor():
 
     fetches = ['normal_0', 'glaucoma', 'retina', 'cataract', 'cataract_glaucoma', 'retina_cataract',
                    'retina_glaucoma']
+    if mode=='train' or mode == 'Train':
+        fetches=map(lambda fetch : fetch +'_train' ,fetches)
+    elif mode == 'test' or mode == 'Test':
+        fetches=map(lambda fetch: fetch +'_test', fetches)
+
+
     batches=[30,14,14,6,4,3,3]
     assert len(fetches) == len(batches)
 
@@ -329,7 +335,8 @@ def get_batches_from_tensor(sess ,images , labels , filenames ):
 
 
 if __name__ =='__main__':
-    images , labels , filenames=get_batch_tensor()
+    images , labels , filenames=get_batch_tensor(mode='train')
+
     init_op = tf.group(tf.global_variables_initializer(), tf.local_variables_initializer())
     sess = tf.Session()
     sess.run(init_op)
