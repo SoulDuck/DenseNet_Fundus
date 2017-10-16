@@ -47,6 +47,7 @@ if args.model_type == 'Densenet':
     args.reduction = 1.0
 elif args.model_type=='DenseNet-BC':
     args.bc_mode=True
+
 model_params = vars(args)
 densenet=model.DenseNet(**model_params)
 densenet.training(learning_rate=0.1)
