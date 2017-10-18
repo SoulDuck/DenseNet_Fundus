@@ -184,7 +184,7 @@ def read_one_example( tfrecord_path , batch_size , resize ):
     return image,label
 
 
-def get_shuffled_batch( tfrecord_path , batch_size , resize ):
+def get_batch( tfrecord_path , batch_size , resize  , mode):
     resize_height , resize_width  = resize
     filename_queue = tf.train.string_input_producer(tfrecord_path , num_epochs=100)
     reader = tf.TFRecordReader()
@@ -210,10 +210,43 @@ def get_shuffled_batch( tfrecord_path , batch_size , resize ):
     image = tf.image.resize_image_with_crop_or_pad(image=image,
                                            target_height=resize_height,
                                            target_width=resize_width)
-    images  , labels  , filename= tf.train.shuffle_batch([image ,label ,filename] , batch_size =batch_size  , capacity =30000 ,num_threads=1 , min_after_dequeue=10)
-    return images  ,labels , filename
+    if mode == 'train':
+        images  , labels  , filename= tf.train.shuffle_batch([image ,label ,filename] , batch_size =batch_size  , capacity =30000 ,num_threads=1 , min_after_dequeue=10)
+    tf.train.batch()
+    if mode == 'test':
+        images, labels, filename = tf.train.batch([image, label, filename], batch_size=batch_size,
+                                                          capacity=30000, num_threads=1)
+        return images, labels, filename
 
-mode='train'
+def get_ordered_batch( tfrecord_path , batch_size , resize ):
+    resize_height, resize_width = resize
+    filename_queue = tf.train.string_input_producer(tfrecord_path, num_epochs=100)
+    reader = tf.TFRecordReader()
+    _, serialized_example = reader.read(filename_queue)
+    features = tf.parse_single_example(serialized_example,
+                                       # Defaults are not specified since both keys are required.
+                                       features={
+                                           'height': tf.FixedLenFeature([], tf.int64),
+                                           'width': tf.FixedLenFeature([], tf.int64),
+                                           'raw_image': tf.FixedLenFeature([], tf.string),
+                                           'label': tf.FixedLenFeature([], tf.int64),
+                                           'filename': tf.FixedLenFeature([], tf.string)
+                                       })
+    image = tf.decode_raw(features['raw_image'], tf.uint8)
+    height = tf.cast(features['height'], tf.int32)
+    width = tf.cast(features['width'], tf.int32)
+    label = tf.cast(features['label'], tf.int32)
+    filename = tf.cast(features['filename'], tf.string)
+
+    image_shape = tf.stack([height, width, 3])  # image_shape shape is ..
+    image_size_const = tf.constant((resize_height, resize_width, 3), dtype=tf.int32)
+    image = tf.reshape(image, image_shape)
+    image = tf.image.resize_image_with_crop_or_pad(image=image,
+                                                   target_height=resize_height,
+                                                   target_width=resize_width)
+    images, labels, filename = tf.train.shuffle_batch([image, label, filename], batch_size=batch_size, capacity=30000,
+                                                      num_threads=1, min_after_dequeue=10)
+
 
 def get_example_queue(mode, batch_size , image_size , depth):
     if mode == 'train':
@@ -228,7 +261,7 @@ def get_example_queue(mode, batch_size , image_size , depth):
             3 * batch_size,
             dtypes=[tf.float32, tf.int32, tf.string ],
             shapes=[[image_size, image_size, depth], [], [] ])
-
+        num_threads = 1
     return example_queue
 
 def enqueue(example_queue,image_tensor , label_tensor , filename_tensor):
@@ -258,8 +291,6 @@ def cls_to_onehot(indices,cls, n_classes):
 
 
 def get_batch_tensor(mode):
-
-
     """
 
     아래 줄이 반드시 정의 되어 있어야 합니다
@@ -267,13 +298,10 @@ def get_batch_tensor(mode):
     sess = tf.Session()
     sess.run(init_op)
     coord = tf.train.Coordinator()
-
-
     마지막에는
     coord.request_stop()
     coord.join(threads)
     이 정의되어 있어야 합니다
-
     """
 
     fetches = ['normal_0', 'glaucoma', 'retina', 'cataract', 'cataract_glaucoma', 'retina_cataract',
@@ -298,7 +326,7 @@ def get_batch_tensor(mode):
         if mode == 'train':
             imgs , labs , fnames = get_shuffled_batch(tfrecord_path , batch_size=b , resize=(299,299))
         elif mode == 'test':
-            raise NotImplementedError
+            imgs, labs, fnames = get_(tfrecord_path, batch_size=b, resize=(299, 299))
 
         images.append(imgs)
         labels.append(labs)

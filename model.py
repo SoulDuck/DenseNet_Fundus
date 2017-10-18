@@ -68,7 +68,7 @@ class DenseNet:
         self._initialize_session()
         batch_xs, batch_ys, batch_fs = self.get_batches_from_tensor(sess=self.sess, images=self._images_tensor_list, \
                                                                     labels=self._labels_tensor_list,
-                                                                    filenames=self._fnames_tensor_list)
+                                                                     filenames=self._fnames_tensor_list)
 
         print np.shape(batch_xs)
         self._count_trainable_params()
