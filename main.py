@@ -54,7 +54,7 @@ input.make_fundus_tfrecords(root_folder='../fundus_data/cropped_original_fundus_
 
 model_params = vars(args)
 densenet=model.DenseNet(**model_params)
-densenet.training(learning_rate=0.1)
-
+densenet.training(learning_rate=0.1) #100에 한번씩 test을 한다
+densenet.testing()
 
 

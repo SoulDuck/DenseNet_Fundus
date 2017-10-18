@@ -41,6 +41,39 @@ def get_fundus_train_test_set(src_name , src_paths , src_labels , random_shuffle
     return src_train_images , src_train_labels , src_test_images , src_test_labels
 
 
+def reconstruct_tfrecord_rawdata(tfrecord_path):
+
+    print 'now Reconstruct Image Data please wait a second'
+    reconstruct_image = []
+    # caution record_iter is generator
+
+    record_iter = tf.python_io.tf_record_iterator(path=tfrecord_path)
+
+    ret_img_list = []
+    ret_lab_list = []
+    ret_fnames = []
+    for i, str_record in enumerate(record_iter):
+        example = tf.train.Example()
+        example.ParseFromString(str_record)
+
+        height = int(example.features.feature['height'].int64_list.value[0])
+        width = int(example.features.feature['width'].int64_list.value[0])
+        print height ,width
+        raw_image = (example.features.feature['raw_image'].bytes_list.value[0])
+        label = int(example.features.feature['label'].int64_list.value[0])
+        filename = int(example.features.feature['filename'].bytes.value[0])
+        filename = filename.decode('utf-8')
+        image = np.fromstring(raw_image, dtype=np.uint8)
+        image = image.reshape((height, width, -1))
+        ret_img_list.append(image)
+        ret_lab_list.append(label)
+        ret_fnames.append(filename)
+    ret_imgs = np.asarray(ret_img_list)
+    ret_labs = np.asarray(ret_lab_list)
+
+    return ret_imgs, ret_labs ,ret_fnames
+
+
 
 
 def make_fundus_tfrecords(root_folder , src_folder_names , src_labels , save_folder , extension='*.png'):
@@ -214,39 +247,7 @@ def get_batch( tfrecord_path , batch_size , resize  , mode):
         images  , labels  , filename= tf.train.shuffle_batch([image ,label ,filename] , batch_size =batch_size  , capacity =30000 ,num_threads=1 , min_after_dequeue=10)
     tf.train.batch()
     if mode == 'test':
-        images, labels, filename = tf.train.batch([image, label, filename], batch_size=batch_size,
-                                                          capacity=30000, num_threads=1)
-        return images, labels, filename
-
-def get_ordered_batch( tfrecord_path , batch_size , resize ):
-    resize_height, resize_width = resize
-    filename_queue = tf.train.string_input_producer(tfrecord_path, num_epochs=100)
-    reader = tf.TFRecordReader()
-    _, serialized_example = reader.read(filename_queue)
-    features = tf.parse_single_example(serialized_example,
-                                       # Defaults are not specified since both keys are required.
-                                       features={
-                                           'height': tf.FixedLenFeature([], tf.int64),
-                                           'width': tf.FixedLenFeature([], tf.int64),
-                                           'raw_image': tf.FixedLenFeature([], tf.string),
-                                           'label': tf.FixedLenFeature([], tf.int64),
-                                           'filename': tf.FixedLenFeature([], tf.string)
-                                       })
-    image = tf.decode_raw(features['raw_image'], tf.uint8)
-    height = tf.cast(features['height'], tf.int32)
-    width = tf.cast(features['width'], tf.int32)
-    label = tf.cast(features['label'], tf.int32)
-    filename = tf.cast(features['filename'], tf.string)
-
-    image_shape = tf.stack([height, width, 3])  # image_shape shape is ..
-    image_size_const = tf.constant((resize_height, resize_width, 3), dtype=tf.int32)
-    image = tf.reshape(image, image_shape)
-    image = tf.image.resize_image_with_crop_or_pad(image=image,
-                                                   target_height=resize_height,
-                                                   target_width=resize_width)
-    images, labels, filename = tf.train.shuffle_batch([image, label, filename], batch_size=batch_size, capacity=30000,
-                                                      num_threads=1, min_after_dequeue=10)
-
+        pass
 
 def get_example_queue(mode, batch_size , image_size , depth):
     if mode == 'train':
@@ -310,8 +311,6 @@ def get_batch_tensor(mode):
         fetches=map(lambda fetch : fetch +'_train' ,fetches)
     elif mode == 'test' or mode == 'Test':
         fetches=map(lambda fetch: fetch +'_test', fetches)
-
-
     batches=[30,14,14,6,4,3,3]
     assert len(fetches) == len(batches)
 
@@ -319,15 +318,18 @@ def get_batch_tensor(mode):
     images=[]
     labels=[]
     filenames=[]
-    for f,b in fb:
-        print 'name:',f ,'\tbatch:',b
-        tfrecord_path = tf.gfile.Glob('dataset'+'/*%s.tfrecord'%f)
-        print tfrecord_path
-        if mode == 'train':
-            imgs , labs , fnames = get_shuffled_batch(tfrecord_path , batch_size=b , resize=(299,299))
-        elif mode == 'test':
-            imgs, labs, fnames = get_(tfrecord_path, batch_size=b, resize=(299, 299))
-
+    if mode == 'train':
+        for f, b in fb:
+            print 'name:', f, '\tbatch:', b
+            tfrecord_path = tf.gfile.Glob('dataset' + '/*%s.tfrecord' % f)
+            print tfrecord_path
+        imgs , labs , fnames = get_batch(tfrecord_path , batch_size=b , resize=(299,299) ,mode=mode)
+    elif mode == 'test':
+        for f, b in fb:
+            print 'name:', f, '\tbatch:', b
+            tfrecord_path = tf.gfile.Glob('dataset' + '/*%s_test.tfrecord' % f)
+            print tfrecord_path
+        imgs, labs , fnames=reconstruct_tfrecord_rawdata(tfrecord_path)
         images.append(imgs)
         labels.append(labs)
         filenames.append(fnames)

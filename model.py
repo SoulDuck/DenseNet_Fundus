@@ -57,20 +57,23 @@ class DenseNet:
             print "Build %s model with %d blocks ,  %d bottleneck layers and %d composite layers each." \
                   % (model_type, self.total_blocks, self.layers_per_block, self.layers_per_block)
         print "Reduction at transition layers : %.1f" % self.reduction
-
         ##함수 실행부##
         self._define_inputs()
         self._build_graph()
         self.get_batches_from_tensor = input.get_batches_from_tensor
-
         self._images_tensor_list , self._labels_tensor_list,self._fnames_tensor_list=input.get_batch_tensor(mode='train')
+        self._images_test_list, self._labels_test_list, self._fnames_test_list = input.get_batch_tensor(mode='test')
+
+
         """**images_tensor_list=[imgs_1_tensor , imgs_2_tensor , imgs_3_tensor]**"""
         self._initialize_session()
+        """
         batch_xs, batch_ys, batch_fs = self.get_batches_from_tensor(sess=self.sess, images=self._images_tensor_list, \
                                                                     labels=self._labels_tensor_list,
                                                                      filenames=self._fnames_tensor_list)
+        print np.shape(batch_xs)                                                             
+        """
 
-        print np.shape(batch_xs)
         self._count_trainable_params()
         print 'DenseNet model initialize Done'
 
@@ -263,7 +266,7 @@ class DenseNet:
         #logits 설정
         with tf.variable_scope("Transition_to_classes"):
             logits = self.transition_layer_to_clssses(output)
-        prediction= tf.nn.softmax(logits , name='softmax')
+        self.prediction= tf.nn.softmax(logits , name='softmax')
 
         #loss 설정
 
@@ -274,14 +277,15 @@ class DenseNet:
 
         optimizer= tf.train.MomentumOptimizer(self.learning_rate , self.nesterov_momentum , use_nesterov=True)
         self.train_step = optimizer.minimize(cross_entropy+l2_loss*self.weight_decay)
-        correct_prediction  = tf.equal(
-            tf.argmax(prediction ,1 ),
+        self.correct_prediction  = tf.equal(
+            tf.argmax(self.prediction ,1 ),
             tf.argmax(self.y_ , 1))
 
-        self.accuracy = tf.reduce_mean(tf.cast(correct_prediction , dtype = tf.float32))
+        self.accuracy = tf.reduce_mean(tf.cast(self.correct_prediction , dtype = tf.float32))
 
 
     def training(self  , learning_rate):
+
         max_iter=100
 
         for step in range(max_iter):
@@ -289,8 +293,6 @@ class DenseNet:
                                                                          labels=self._labels_tensor_list , filenames=self._fnames_tensor_list )
             batch_ys=input.cls_to_onehot(batch_ys , self.n_classes )
             batch_xs , batch_ys=input.batch_shuffle(batch_xs , batch_ys)
-
-
             feed_dict = {
                 #self._images_tensor_list , self._labels_tensor_list , self._fnames_tensor_list
                 self.x_: batch_xs,
@@ -298,7 +300,38 @@ class DenseNet:
                 self.learning_rate: learning_rate,
                 self.is_training: True}
             fetches = [self.train_step, self.cross_entropy, self.accuracy]
-            _,loss, accuracy=self.sess.run(fetches=fetches, feed_dict=feed_dict)
+            _ , loss, accuracy=self.sess.run(fetches=fetches, feed_dict=feed_dict)
             self.log_loss_accuracy(loss=loss , accuracy=accuracy ,epoch = step, prefix='per_batch')
         self.coord.request_stop()
         self.coord.join(threads=self.threads)
+
+    def testing(self):
+        #cataract , normal 각각의 accuracy을 보여주고 마지막엔 모두를 더한 total accuracy을 보여준다
+        acc_global=[]
+        pred_list=[]
+        imgs_labs_fnames_list=zip(self._images_tensor_list,self._labels_tensor_list,self._fnames_tensor_list)
+        #여기에는 cataract , glaucoam , retina test  image ,label , fnames가 들어있다
+        for i, (imgs_list , labs_list , fnames_list ) in imgs_labs_fnames_list:
+            imgs_labs_fnames_list=zip(imgs_list , labs_list , fnames_list)
+            for img , lab , fname in imgs_labs_fnames_list:
+                feed_dict = {
+                    #self._images_tensor_list , self._labels_tensor_list , self._fnames_tensor_list
+                    self.x_: img,
+                    self.is_training: False}
+                fetches =  self.softmax
+                pred = self.sess.run(fetches=fetches, feed_dict=feed_dict)
+                pred_list.append(pred)
+            pred_list=np.asarray(pred_list)
+            pred_list=np.argmax(pred_list, axis=0)
+            acc=np.mean(pred_list)
+            print 'fname :{} accuracy : {}'.format(fname[0] , acc )
+            acc_global.extend([pred_list == lab])
+        acc_global=np.mean(acc_global)
+        print 'total accuracy : ',acc_global
+    #self._images_test_list, self._labels_test_list, self._fnames_test_list
+
+
+
+
+
+
