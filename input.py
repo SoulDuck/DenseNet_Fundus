@@ -245,7 +245,6 @@ def get_batch( tfrecord_path , batch_size , resize  , mode):
                                            target_width=resize_width)
     if mode == 'train':
         images  , labels  , filename= tf.train.shuffle_batch([image ,label ,filename] , batch_size =batch_size  , capacity =30000 ,num_threads=1 , min_after_dequeue=10)
-    tf.train.batch()
     if mode == 'test':
         pass
 
