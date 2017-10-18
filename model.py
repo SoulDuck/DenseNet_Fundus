@@ -334,7 +334,7 @@ class DenseNet:
             if idx_global==0:
                 acc_global=pred_list
             else:
-                acc_global=np.hstack(acc_global,pred_list)
+                acc_global=np.hstack((acc_global,pred_list))
         print np.shape(acc_global)
         acc_global=np.mean(acc_global)
         print 'total accuracy : ',acc_global
