@@ -21,26 +21,26 @@ def get_fundus_train_test_set(src_name , src_paths , src_labels , random_shuffle
 
     # 여기서 테스트 셋과 트레이닝 세트의 비율을 정합니다
     if src_name == 'glaucoma':
-        n_train=100
+        n_test=100
     elif src_name == 'cataract':
-        n_train = 50
+        n_test = 50
     elif src_name == 'normal_0':
-        n_train = 300
+        n_test = 300
     elif src_name == 'normal_1':
-        n_train = 300
+        n_test = 300
     elif src_name == 'retina':
-        n_train = 100
+        n_test = 100
     elif src_name == 'cataract_glaucoma':
-        n_train = 10
+        n_test = 10
     elif src_name == 'retina_cataract':
-        n_train = 10
+        n_test = 10
     elif src_name == 'retina_glaucoma':
-        n_train = 10
-    src_train_images=src_paths[:n_train]
-    src_train_labels = src_labels[:n_train]
+        n_test = 10
+    src_train_images=src_paths[:n_test]
+    src_train_labels = src_labels[:n_test]
 
-    src_test_images = src_paths[n_train:]
-    src_test_labels = src_labels[n_train:]
+    src_test_images = src_paths[:n_test]
+    src_test_labels = src_labels[:n_test]
 
     return src_train_images , src_train_labels , src_test_images , src_test_labels
 

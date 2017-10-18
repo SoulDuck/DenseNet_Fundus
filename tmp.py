@@ -34,4 +34,5 @@ def reconstruct_tfrecord_rawdata(tfrecord_path):
 
     return ret_imgs, ret_labs ,ret_fnames
 
-reconstruct_tfrecord_rawdata('./dataset/cataract_test.tfrecord')
+imgs , labs , fnames=reconstruct_tfrecord_rawdata('./dataset/retina_test.tfrecord')
+print np.shape(imgs)
