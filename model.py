@@ -315,7 +315,7 @@ class DenseNet:
         for i, (imgs_list , labs_list , fnames_list ) in enumerate(imgs_labs_fnames_list):
             imgs_labs_fnames_list=zip(imgs_list , labs_list , fnames_list)
             for img , lab , fname in imgs_labs_fnames_list:
-                h,w,c=img.shape()
+                h,w,c=np.shape(img)
                 img=img.reshape([1,h,w,c])
                 feed_dict = {
                     #self._images_tensor_list , self._labels_tensor_list , self._fnames_tensor_list
