@@ -58,7 +58,6 @@ def reconstruct_tfrecord_rawdata(tfrecord_path ,resize=(299,299)):
 
         height = int(example.features.feature['height'].int64_list.value[0])
         width = int(example.features.feature['width'].int64_list.value[0])
-        print height ,width
         raw_image = (example.features.feature['raw_image'].bytes_list.value[0])
         label = int(example.features.feature['label'].int64_list.value[0])
         filename = example.features.feature['filename'].bytes_list.value[0]
@@ -330,7 +329,7 @@ def get_batch_tensor(mode):
         #images_list, labels_list, filenames_list  is list that was included tensor
     elif mode == 'test' or mode == 'Test':
         for tfrecord_path in tfrecord_paths:
-            print '####tfrecord_path'
+            print '####tfrecord_path',tfrecord_path
             images, labels , filenames=reconstruct_tfrecord_rawdata(tfrecord_path)
             images_list.append(images)
             labels_list.append(labels)
