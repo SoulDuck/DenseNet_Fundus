@@ -36,3 +36,8 @@ def reconstruct_tfrecord_rawdata(tfrecord_path):
 
 imgs , labs , fnames=reconstruct_tfrecord_rawdata('./dataset/retina_test.tfrecord')
 print np.shape(imgs)
+
+
+
+a=np.asarray([[1,3],[2,4]])
+print np.argmax(a,axis=1)
