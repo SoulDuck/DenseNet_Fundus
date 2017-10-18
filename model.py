@@ -314,8 +314,9 @@ class DenseNet:
         #여기에는 cataract , glaucoam , retina test  image ,label , fnames가 들어있다
         for i, (imgs_list , labs_list , fnames_list ) in enumerate(imgs_labs_fnames_list):
             imgs_labs_fnames_list=zip(imgs_list , labs_list , fnames_list)
+            print '# : ',len(imgs_labs_fnames_list)
             for img , lab , fname in imgs_labs_fnames_list:
-
+                print fname
                 h,w,c=np.shape(img)
                 img=img.reshape([1,h,w,c])
                 feed_dict = {
