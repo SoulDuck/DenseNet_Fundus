@@ -326,14 +326,16 @@ class DenseNet:
                 if idx_local ==0:
                     pred_list=pred
                 else:
-                    pred_list=pred_list.vstack((pred_list,pred))
+                    pred_list=np.vstack((pred_list,pred))
+            print np.shape(pred_list)
             pred_list=np.argmax(pred_list, axis=0)
             acc=np.mean(pred_list)
             print 'fname :{} accuracy : {}'.format(fname , acc )
             if idx_global==0:
                 acc_global=pred_list
             else:
-                acc_global=acc_global.hstack(acc_global,pred_list)
+                acc_global=np.hstack(acc_global,pred_list)
+        print np.shape(acc_global)
         acc_global=np.mean(acc_global)
         print 'total accuracy : ',acc_global
     #self._images_test_list, self._labels_test_list, self._fnames_test_list
