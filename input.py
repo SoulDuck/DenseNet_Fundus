@@ -69,7 +69,10 @@ def reconstruct_tfrecord_rawdata(tfrecord_path ,resize=(299,299)):
         ret_lab_list.append(label)
         ret_fnames.append(filename)
     ret_imgs = np.asarray(ret_img_list)
-    ret_imgs=ret_imgs[:,:resize[0],:resize[1],:]
+    if  np.ndim(ret_imgs) ==3:
+        ret_imgs=ret_imgs[:resize[0],:resize[1],:]
+    elif np.ndim(ret_imgs) ==4:
+        ret_imgs = ret_imgs[:,:resize[0], :resize[1], :]
     ret_labs = np.asarray(ret_lab_list)
 
     return ret_imgs, ret_labs ,ret_fnames
@@ -329,9 +332,9 @@ def get_batch_tensor(mode):
             images, labels, filenames = get_batch(tfrecord_path, batch_size=b, resize=(299, 299), mode=mode)
             #images_list, labels_list, filenames_list  is list that was included tensor
         elif mode == 'test' or mode == 'Test':
-            print '####tfrecord_path',tfrecord_path
+            tfrecord_path=tfrecord_path[0]
+            print '####tfrecord_path',tfrecord_path[0]
             images, labels , filenames=reconstruct_tfrecord_rawdata(tfrecord_path,resize=(299, 299))
-
         images_list.append(images)
         labels_list.append(labels)
         filenames_list.append(filenames)
