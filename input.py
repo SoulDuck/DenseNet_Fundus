@@ -58,6 +58,7 @@ def reconstruct_tfrecord_rawdata(tfrecord_path ,resize=(299,299)):
 
         height = int(example.features.feature['height'].int64_list.value[0])
         width = int(example.features.feature['width'].int64_list.value[0])
+
         raw_image = (example.features.feature['raw_image'].bytes_list.value[0])
         label = int(example.features.feature['label'].int64_list.value[0])
         filename = example.features.feature['filename'].bytes_list.value[0]
@@ -321,19 +322,19 @@ def get_batch_tensor(mode):
 
     for f, b in fb:
         print 'name:', f, '\tbatch:', b
-        tfrecord_paths = tf.gfile.Glob('./dataset' + '/*%s.tfrecord' % f)
-        print 'tfrecord paths : ',tfrecord_paths
-
-    if mode == 'train' or mode == 'Train':
-        images_list, labels_list, filenames_list = get_batch(tfrecord_paths, batch_size=b, resize=(299, 299), mode=mode)
-        #images_list, labels_list, filenames_list  is list that was included tensor
-    elif mode == 'test' or mode == 'Test':
-        for tfrecord_path in tfrecord_paths:
+        tfrecord_path = tf.gfile.Glob('./dataset' + '/*%s.tfrecord' % f)
+        #Glob을쓰는이유는 이렇게 해야 tensor가 인식을 한다
+        print 'tfrecord paths : ',tfrecord_path
+        if mode == 'train' or mode == 'Train':
+            images, labels, filenames = get_batch(tfrecord_path, batch_size=b, resize=(299, 299), mode=mode)
+            #images_list, labels_list, filenames_list  is list that was included tensor
+        elif mode == 'test' or mode == 'Test':
             print '####tfrecord_path',tfrecord_path
-            images, labels , filenames=reconstruct_tfrecord_rawdata(tfrecord_path)
-            images_list.append(images)
-            labels_list.append(labels)
-            filenames_list.append(filenames)
+            images, labels , filenames=reconstruct_tfrecord_rawdata(tfrecord_path,resize=(299, 299))
+
+        images_list.append(images)
+        labels_list.append(labels)
+        filenames_list.append(filenames)
     print 'Done'
     return images_list, labels_list,filenames_list
 """
