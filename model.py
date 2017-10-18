@@ -325,7 +325,8 @@ class DenseNet:
                     self.is_training: False}
                 fetches =  self.prediction
                 pred = self.sess.run(fetches=fetches, feed_dict=feed_dict)
-                pred_list.append(pred)
+                print pred
+                pred_list.append(list(pred))
             pred_list=np.asarray(pred_list)
             pred_list=np.argmax(pred_list, axis=0)
             acc=np.mean(pred_list)
