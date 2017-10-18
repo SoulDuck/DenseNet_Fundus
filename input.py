@@ -333,7 +333,7 @@ def get_batch_tensor(mode):
         labels_list.append(labels)
         filenames_list.append(filenames)
     print 'Done'
-    return images, labels,filenames
+    return images_list, labels_list,filenames_list
 """
 for i in xrange(2):
     imgs_labs_fnames=zip(images , labels , filenames)
