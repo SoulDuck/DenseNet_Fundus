@@ -328,7 +328,7 @@ class DenseNet:
                 else:
                     pred_list=np.vstack((pred_list,pred))
             print np.shape(pred_list)
-            pred_list=np.argmax(pred_list, axis=0)
+            pred_list=np.argmax(pred_list, axis=1)
             acc=np.mean(pred_list)
             print 'fname :{} accuracy : {}'.format(fname , acc )
             if idx_global==0:
