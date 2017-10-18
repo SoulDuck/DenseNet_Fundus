@@ -61,7 +61,7 @@ def reconstruct_tfrecord_rawdata(tfrecord_path):
         print height ,width
         raw_image = (example.features.feature['raw_image'].bytes_list.value[0])
         label = int(example.features.feature['label'].int64_list.value[0])
-        filename = int(example.features.feature['filename'].bytes.value[0])
+        filename = example.features.feature['filename'].bytes_list.value[0]
         filename = filename.decode('utf-8')
         image = np.fromstring(raw_image, dtype=np.uint8)
         image = image.reshape((height, width, -1))
@@ -321,17 +321,18 @@ def get_batch_tensor(mode):
 
     for f, b in fb:
         print 'name:', f, '\tbatch:', b
-        tfrecord_path = tf.gfile.Glob('dataset' + '/*%s.tfrecord' % f)
-        print tfrecord_path
+        tfrecord_paths = tf.gfile.Glob('./dataset' + '/*%s.tfrecord' % f)
+        print 'tfrecord paths : ',tfrecord_paths
 
     if mode == 'train' or mode == 'Train':
-        images_list, labels_list, filenames_list = get_batch(tfrecord_path, batch_size=b, resize=(299, 299), mode=mode)
+        images_list, labels_list, filenames_list = get_batch(tfrecord_paths, batch_size=b, resize=(299, 299), mode=mode)
         #images_list, labels_list, filenames_list  is list that was included tensor
     elif mode == 'test' or mode == 'Test':
-        images, labels , filenames=reconstruct_tfrecord_rawdata(tfrecord_path)
-        images_list.append(images)
-        labels_list.append(labels)
-        filenames_list.append(filenames)
+        for tfrecord_path in tfrecord_paths:
+            images, labels , filenames=reconstruct_tfrecord_rawdata(tfrecord_path)
+            images_list.append(images)
+            labels_list.append(labels)
+            filenames_list.append(filenames)
     print 'Done'
     return images_list, labels_list,filenames_list
 """
