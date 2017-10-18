@@ -310,7 +310,7 @@ class DenseNet:
         acc_global=[]
         pred_list=[]
         imgs_labs_fnames_list=zip(self._images_test_list,self._labels_test_list,self._fnames_test_list)
-
+        print '# : ', len(imgs_labs_fnames_list)
         #여기에는 cataract , glaucoam , retina test  image ,label , fnames가 들어있다
         for i, (imgs_list , labs_list , fnames_list ) in enumerate(imgs_labs_fnames_list):
             imgs_labs_fnames_=zip(imgs_list , labs_list , fnames_list)
