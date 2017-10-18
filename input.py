@@ -7,6 +7,10 @@ import os
 import glob
 from PIL import Image
 import random
+
+debug_lv0=True
+debug_lv1=True
+
 def get_fundus_train_test_set(src_name , src_paths , src_labels , random_shuffle=True):
     random.seed(123)
     assert len(src_paths) == len(src_labels) and len(src_paths) != 0
@@ -325,9 +329,9 @@ def get_batch_tensor(mode):
 
     for f, b in fb:
         print 'name:', f, '\tbatch:', b
-        tfrecord_path = tf.gfile.Glob('./dataset' + '/*%s.tfrecord' % f)
+        tfrecord_path = tf.gfile.Glob('./dataset' + '/%s.tfrecord' % f)
         #Glob을쓰는이유는 이렇게 해야 tensor가 인식을 한다
-        print 'tfrecord paths : ',tfrecord_path
+        print 'tfrecord path : ',tfrecord_path
         if mode == 'train' or mode == 'Train':
             images, labels, filenames = get_batch(tfrecord_path, batch_size=b, resize=(299, 299), mode=mode)
             #images_list, labels_list, filenames_list  is list that was included tensor
@@ -335,11 +339,15 @@ def get_batch_tensor(mode):
             tfrecord_path=tfrecord_path[0]
             print '####tfrecord_path',tfrecord_path[0]
             images, labels , filenames=reconstruct_tfrecord_rawdata(tfrecord_path,resize=(299, 299))
+            if __debug__ == debug_lv0:
+                print 'image shape : ',np.shape(images)
+                print 'label shape : ', np.shape(labels)
+                print 'fname shape : ', len(filenames)
         images_list.append(images)
         labels_list.append(labels)
         filenames_list.append(filenames)
     print 'Done'
-    return images_list, labels_list,filenames_list
+    return images_list, labels_list, filenames_list
 """
 for i in xrange(2):
     imgs_labs_fnames=zip(images , labels , filenames)
