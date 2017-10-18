@@ -330,6 +330,7 @@ def get_batch_tensor(mode):
         #images_list, labels_list, filenames_list  is list that was included tensor
     elif mode == 'test' or mode == 'Test':
         for tfrecord_path in tfrecord_paths:
+            print '####tfrecord_path'
             images, labels , filenames=reconstruct_tfrecord_rawdata(tfrecord_path)
             images_list.append(images)
             labels_list.append(labels)
