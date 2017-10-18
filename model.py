@@ -308,15 +308,13 @@ class DenseNet:
     def testing(self):
         #cataract , normal 각각의 accuracy을 보여주고 마지막엔 모두를 더한 total accuracy을 보여준다
         acc_global=[]
-        pred_list=[]
         imgs_labs_fnames_list=zip(self._images_test_list,self._labels_test_list,self._fnames_test_list)
         print '# : ', len(imgs_labs_fnames_list)
         #여기에는 cataract , glaucoam , retina test  image ,label , fnames가 들어있다
-        for i, (imgs_list , labs_list , fnames_list ) in enumerate(imgs_labs_fnames_list):
+        for idx_global , (imgs_list , labs_list , fnames_list ) in enumerate(imgs_labs_fnames_list):
             imgs_labs_fnames_=zip(imgs_list , labs_list , fnames_list)
             print '# : ',len(imgs_labs_fnames_)
-            for img , lab , fname in imgs_labs_fnames_:
-                print fname
+            for idx_local , (img , lab , fname )in enumerate(imgs_labs_fnames_):
                 h,w,c=np.shape(img)
                 img=img.reshape([1,h,w,c])
                 feed_dict = {
@@ -325,13 +323,17 @@ class DenseNet:
                     self.is_training: False}
                 fetches =  self.prediction
                 pred = self.sess.run(fetches=fetches, feed_dict=feed_dict)
-                print pred
-                pred_list.append(list(pred))
-            pred_list=np.asarray(pred_list)
+                if idx_local ==0:
+                    pred_list=pred
+                else:
+                    pred_list=pred_list.vstack((pred_list,pred))
             pred_list=np.argmax(pred_list, axis=0)
             acc=np.mean(pred_list)
             print 'fname :{} accuracy : {}'.format(fname , acc )
-            acc_global.extend([pred_list == lab])
+            if idx_global==0:
+                acc_global=pred_list
+            else:
+                acc_global=acc_global.hstack(acc_global,pred_list)
         acc_global=np.mean(acc_global)
         print 'total accuracy : ',acc_global
     #self._images_test_list, self._labels_test_list, self._fnames_test_list

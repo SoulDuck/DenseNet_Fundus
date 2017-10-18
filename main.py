@@ -51,7 +51,6 @@ src_folder_names=['normal_0' , 'normal_1','glaucoma', 'cataract', 'retina','reti
 src_labels=[1,1,0,0,0,0,0,0]
 input.make_fundus_tfrecords(root_folder='../fundus_data/cropped_original_fundus_300x300' , src_folder_names=src_folder_names , src_labels=src_labels , save_folder='./dataset')
 
-
 model_params = vars(args)
 densenet=model.DenseNet(**model_params)
 densenet.testing()
