@@ -309,16 +309,17 @@ class DenseNet:
         #cataract , normal 각각의 accuracy을 보여주고 마지막엔 모두를 더한 total accuracy을 보여준다
         acc_global=[]
         pred_list=[]
-        imgs_labs_fnames_list=zip(self._images_tensor_list,self._labels_tensor_list,self._fnames_tensor_list)
+        imgs_labs_fnames_list=zip(self._images_test_list,self._labels_test_list,self._fnames_test_list)
+
         #여기에는 cataract , glaucoam , retina test  image ,label , fnames가 들어있다
-        for i, (imgs_list , labs_list , fnames_list ) in imgs_labs_fnames_list:
+        for i, (imgs_list , labs_list , fnames_list ) in enumerate(imgs_labs_fnames_list):
             imgs_labs_fnames_list=zip(imgs_list , labs_list , fnames_list)
             for img , lab , fname in imgs_labs_fnames_list:
                 feed_dict = {
                     #self._images_tensor_list , self._labels_tensor_list , self._fnames_tensor_list
                     self.x_: img,
                     self.is_training: False}
-                fetches =  self.softmax
+                fetches =  self.prediction
                 pred = self.sess.run(fetches=fetches, feed_dict=feed_dict)
                 pred_list.append(pred)
             pred_list=np.asarray(pred_list)

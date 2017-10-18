@@ -41,7 +41,7 @@ def get_fundus_train_test_set(src_name , src_paths , src_labels , random_shuffle
     return src_train_images , src_train_labels , src_test_images , src_test_labels
 
 
-def reconstruct_tfrecord_rawdata(tfrecord_path):
+def reconstruct_tfrecord_rawdata(tfrecord_path ,resize=(299,299)):
 
     print 'now Reconstruct Image Data please wait a second'
     reconstruct_image = []
@@ -69,6 +69,7 @@ def reconstruct_tfrecord_rawdata(tfrecord_path):
         ret_lab_list.append(label)
         ret_fnames.append(filename)
     ret_imgs = np.asarray(ret_img_list)
+    ret_imgs=ret_imgs[:,:resize[0],:resize[1],:]
     ret_labs = np.asarray(ret_lab_list)
 
     return ret_imgs, ret_labs ,ret_fnames
