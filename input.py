@@ -315,24 +315,23 @@ def get_batch_tensor(mode):
     assert len(fetches) == len(batches)
 
     fb=zip(fetches , batches)
-    images=[]
-    labels=[]
-    filenames=[]
-    if mode == 'train':
-        for f, b in fb:
-            print 'name:', f, '\tbatch:', b
-            tfrecord_path = tf.gfile.Glob('dataset' + '/*%s.tfrecord' % f)
-            print tfrecord_path
-        imgs , labs , fnames = get_batch(tfrecord_path , batch_size=b , resize=(299,299) ,mode=mode)
-    elif mode == 'test':
-        for f, b in fb:
-            print 'name:', f, '\tbatch:', b
-            tfrecord_path = tf.gfile.Glob('dataset' + '/*%s_test.tfrecord' % f)
-            print tfrecord_path
-        imgs, labs , fnames=reconstruct_tfrecord_rawdata(tfrecord_path)
-        images.append(imgs)
-        labels.append(labs)
-        filenames.append(fnames)
+    images_list=[]
+    labels_list=[]
+    filenames_list=[]
+
+    for f, b in fb:
+        print 'name:', f, '\tbatch:', b
+        tfrecord_path = tf.gfile.Glob('dataset' + '/*%s.tfrecord' % f)
+        print tfrecord_path
+
+    if mode == 'train' or mode == 'Train':
+        images_list, labels_list, filenames_list = get_batch(tfrecord_path, batch_size=b, resize=(299, 299), mode=mode)
+        #images_list, labels_list, filenames_list  is list that was included tensor
+    elif mode == 'test' or mode == 'Test':
+        images, labels , filenames=reconstruct_tfrecord_rawdata(tfrecord_path)
+        images_list.append(images)
+        labels_list.append(labels)
+        filenames_list.append(filenames)
     print 'Done'
     return images, labels,filenames
 """
