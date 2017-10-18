@@ -308,6 +308,8 @@ class DenseNet:
     def testing(self):
         #cataract , normal 각각의 accuracy을 보여주고 마지막엔 모두를 더한 total accuracy을 보여준다
         acc_global=[]
+        pred_global=[]
+        label_global=[]
         imgs_labs_fnames_list=zip(self._images_test_list,self._labels_test_list,self._fnames_test_list)
         print '# : ', len(imgs_labs_fnames_list)
         #여기에는 cataract , glaucoam , retina test  image ,label , fnames가 들어있다
@@ -332,12 +334,15 @@ class DenseNet:
             acc=np.mean(np.equal(pred_list , labs_list))
             print 'fname :{} accuracy : {}'.format(fname , acc )
             if idx_global==0:
-                acc_global=pred_list
+                pred_global=pred_list
+                label_global=labs_list
             else:
-                acc_global=np.hstack((acc_global,pred_list))
-        print np.shape(acc_global)
-        acc_global=np.mean(acc_global)
-        print 'total accuracy : ',acc_global
+                pred_global=np.hstack((pred_global,pred_list))
+                label_global=np.hstack((label_global , labs_list))
+        global_acc = np.mean(np.equal(pred_global, label_global))
+        print np.shape(global_acc )
+        acc_global=np.mean(global_acc )
+        print 'total accuracy : ',global_acc
     #self._images_test_list, self._labels_test_list, self._fnames_test_list
 
 
