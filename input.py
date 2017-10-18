@@ -331,7 +331,9 @@ def get_batch_tensor(mode):
         print 'name:', f, '\tbatch:', b
         tfrecord_path = tf.gfile.Glob('./dataset' + '/%s.tfrecord' % f)
         #Glob을쓰는이유는 이렇게 해야 tensor가 인식을 한다
-        print 'tfrecord path : ',tfrecord_path
+        if __debug__ == debug_lv0:
+            print 'tfrecord path : ',tfrecord_path
+
         if mode == 'train' or mode == 'Train':
             images, labels, filenames = get_batch(tfrecord_path, batch_size=b, resize=(299, 299), mode=mode)
             #images_list, labels_list, filenames_list  is list that was included tensor
