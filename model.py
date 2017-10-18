@@ -315,6 +315,7 @@ class DenseNet:
         for i, (imgs_list , labs_list , fnames_list ) in enumerate(imgs_labs_fnames_list):
             imgs_labs_fnames_list=zip(imgs_list , labs_list , fnames_list)
             for img , lab , fname in imgs_labs_fnames_list:
+
                 h,w,c=np.shape(img)
                 img=img.reshape([1,h,w,c])
                 feed_dict = {
@@ -327,7 +328,7 @@ class DenseNet:
             pred_list=np.asarray(pred_list)
             pred_list=np.argmax(pred_list, axis=0)
             acc=np.mean(pred_list)
-            print 'fname :{} accuracy : {}'.format(fname[0] , acc )
+            print 'fname :{} accuracy : {}'.format(fname , acc )
             acc_global.extend([pred_list == lab])
         acc_global=np.mean(acc_global)
         print 'total accuracy : ',acc_global
