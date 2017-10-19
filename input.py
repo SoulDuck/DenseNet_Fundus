@@ -331,6 +331,7 @@ def get_batch_tensor(mode , n_epoch=None):
 
             if __debug__ == debug_lv0:
                 print 'tfrecord path : ', tfrecord_path
+
                 images, labels, filenames = get_batch(tfrecord_path, batch_size=batches[i], \
                                                   resize=(299, 299), mode=mode, num_epoch=epochs[i])
 
@@ -378,7 +379,10 @@ for i in xrange(2):
 
 
 def get_batches_from_tensor(sess ,images , labels , filenames):
+    print labels
+
     imgs, labs, fnames = sess.run([images, labels, filenames])
+
     imgs_labs_fnames=zip(imgs,labs ,fnames)
     for i,(img,lab,fname) in enumerate(imgs_labs_fnames):
         if i ==0 :
