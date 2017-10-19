@@ -19,7 +19,7 @@ def reconstruct_tfrecord_rawdata(tfrecord_path):
 
         height = int(example.features.feature['height'].int64_list.value[0])
         width = int(example.features.feature['width'].int64_list.value[0])
-        print height ,width
+        #print height ,width
         raw_image = (example.features.feature['raw_image'].bytes_list.value[0])
         label = int(example.features.feature['label'].int64_list.value[0])
         filename = (example.features.feature['filename'].bytes_list.value[0])
