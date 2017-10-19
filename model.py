@@ -324,7 +324,7 @@ class DenseNet:
                 if np.max(img) >1 :
                     img=img/255.
                     if idx_local ==0:
-                        print 'max : ', np.max(batch_xs)
+                        print 'max : ', np.max(img)
                 h,w,c=np.shape(img)
                 img=img.reshape([1,h,w,c])
                 feed_dict = {
