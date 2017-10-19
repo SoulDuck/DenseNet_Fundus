@@ -295,6 +295,8 @@ class DenseNet:
             batch_xs , batch_ys=input.batch_shuffle(batch_xs , batch_ys)
             if np.max(batch_xs) > 1 :
                 batch_xs=batch_xs/255.
+                if step==0:
+                    print 'max : ',np.max(batch_xs)
             feed_dict = {
                 #self._images_tensor_list , self._labels_tensor_list , self._fnames_tensor_list
                 self.x_: batch_xs,
@@ -321,6 +323,8 @@ class DenseNet:
             for idx_local , (img , lab , fname )in enumerate(imgs_labs_fnames_):
                 if np.max(img) >1 :
                     img=img/255.
+                    if idx_local ==0:
+                        print 'max : ', np.max(batch_xs)
                 h,w,c=np.shape(img)
                 img=img.reshape([1,h,w,c])
                 feed_dict = {
