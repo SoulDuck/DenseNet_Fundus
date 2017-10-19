@@ -382,7 +382,16 @@ for i in xrange(2):
 
 
 def get_batches_from_tensor(sess ,images , labels , filenames):
-    imgs, labs, fnames = sess.run([images, labels, filenames])
+    imgs=[];labs=[];fnames=[];
+    for i,_ in enumerate(images):
+        try:
+            img,lab,fname=sess.run([images[i],labels[i],filenames[i]])
+        except tf.errors.OutOfRangeError as oor:
+            print i , oor
+        imgs.append(img)
+        labs.append(lab)
+        fnames.append(fname)
+
     imgs_labs_fnames=zip(imgs,labs ,fnames)
     for i,(img,lab,fname) in enumerate(imgs_labs_fnames):
 
