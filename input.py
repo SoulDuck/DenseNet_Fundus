@@ -320,7 +320,7 @@ def get_batch_tensor(mode , n_epoch=None):
             n_epoch=100
             print 'default n_epoch {}'.format(100)
         fetches=map(lambda fetch : fetch +'_train' ,fetches)
-        epochs = [2 * n_epoch, 1 * n_epoch, 3 * n_epoch, 4 * n_epoch, 41 * n_epoch, 30 * n_epoch, 11 * n_epoch]
+        epochs = [3 * n_epoch, 1 * n_epoch, 3 * n_epoch, 4 * n_epoch, 41 * n_epoch, 30 * n_epoch, 11 * n_epoch]
         batches = [30, 14, 14, 6, 4, 3, 3]
         assert len(fetches) == len(batches) ==len(epochs)
         for i,f in enumerate(fetches):
