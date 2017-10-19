@@ -344,6 +344,7 @@ class DenseNet:
                     self.is_training: False}
                 fetches = [self.prediction , self.cross_entropy]
                 pred, loss = self.sess.run(fetches=fetches, feed_dict=feed_dict)
+                print 'loss',loss
                 if idx_local ==0:
                     pred_list=pred
                     loss_list=loss
