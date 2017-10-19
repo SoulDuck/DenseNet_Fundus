@@ -227,7 +227,7 @@ def read_one_example( tfrecord_path , batch_size , resize ):
 
 def get_batch( tfrecord_path , batch_size , resize  , mode , num_epochs):
     resize_height , resize_width  = resize
-    filename_queue = tf.train.string_input_producer(tfrecord_path , num_epochs=1000)
+    filename_queue = tf.train.string_input_producer(tfrecord_path , num_epochs=num_epochs)
     reader = tf.TFRecordReader()
     _ , serialized_example = reader.read(filename_queue)
     features = tf.parse_single_example(serialized_example,
@@ -315,7 +315,7 @@ def get_batch_tensor(mode):
 
     fetches = ['normal_0', 'glaucoma', 'retina', 'cataract', 'cataract_glaucoma', 'retina_cataract',
                    'retina_glaucoma']
-    epochs=[10,]
+    epochs= [1000,1000,1000,1000,1000,1000,1000]
     if mode=='train' or mode == 'Train':
         fetches=map(lambda fetch : fetch +'_train' ,fetches)
     elif mode == 'test' or mode == 'Test':
