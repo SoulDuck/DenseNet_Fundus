@@ -366,12 +366,10 @@ class DenseNet:
             else:
                 pred_global=np.hstack((pred_global,pred_list))
                 label_global=np.hstack((label_global , labs_list))
-
         global_acc = np.mean(np.equal(pred_global, label_global))
         global_loss = np.mean(label_global)
         print 'total accuracy : ', global_acc
         print 'total loss : ' , global_loss
-
         acc_global=np.mean(global_acc )
         summary = tf.Summary(value=[tf.Summary.Value(tag='loss_%s' % 'test', simple_value=float(loss)),
                                     tf.Summary.Value(tag='accuracy_%s' % 'test', simple_value=float(acc_global))])
