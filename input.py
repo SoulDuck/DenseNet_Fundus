@@ -315,7 +315,7 @@ def get_batch_tensor(mode):
 
     fetches = ['normal_0', 'glaucoma', 'retina', 'cataract', 'cataract_glaucoma', 'retina_cataract',
                    'retina_glaucoma']
-    epochs= [1,1,1,1,1,1,1]
+    epochs= [1,1,1,1,1,1,10]
     if mode=='train' or mode == 'Train':
         fetches=map(lambda fetch : fetch +'_train' ,fetches)
     elif mode == 'test' or mode == 'Test':
