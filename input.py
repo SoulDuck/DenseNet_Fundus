@@ -312,10 +312,11 @@ def get_batch_tensor(mode):
     coord.join(threads)
     이 정의되어 있어야 합니다
     """
-
+    n_epoch=100
     fetches = ['normal_0', 'glaucoma', 'retina', 'cataract', 'cataract_glaucoma', 'retina_cataract',
                    'retina_glaucoma']
-    epochs= [1,1,1,1,1,1,1]
+
+    epochs= [2*n_epoch,1*n_epoch,3*n_epoch,4*n_epoch,41*n_epoch,30*n_epoch,11*n_epoch]
     if mode=='train' or mode == 'Train':
         fetches=map(lambda fetch : fetch +'_train' ,fetches)
     elif mode == 'test' or mode == 'Test':
