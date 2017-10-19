@@ -323,6 +323,7 @@ class DenseNet:
         #cataract , normal 각각의 accuracy을 보여주고 마지막엔 모두를 더한 total accuracy을 보여준다
         acc_global=[]
         pred_global=[]
+        loss_global=[]
         label_global=[]
         imgs_labs_fnames_list=zip(self._images_test_list,self._labels_test_list,self._fnames_test_list)
         print '# : ', len(imgs_labs_fnames_list)
@@ -341,26 +342,41 @@ class DenseNet:
                     #self._images_tensor_list , self._labels_tensor_list , self._fnames_tensor_list
                     self.x_: img,
                     self.is_training: False}
-                fetches =  self.prediction
-                pred = self.sess.run(fetches=fetches, feed_dict=feed_dict)
+                fetches = [self.prediction , self.cross_entropy]
+                pred, loss = self.sess.run(fetches=fetches, feed_dict=feed_dict)
                 if idx_local ==0:
                     pred_list=pred
+                    loss_list=loss
                 else:
                     pred_list=np.vstack((pred_list,pred))
-            print np.shape(pred_list)
+                    loss_list = np.vstack((loss_list, loss))
+            print 'predict list shape : ',np.shape(pred_list)
+            print 'loss list shape : ',np.shape(loss_list)
             pred_list=np.argmax(pred_list ,axis=1)
             acc=np.mean(np.equal(pred_list , labs_list))
-            print 'fname :{} accuracy : {}'.format(fname , acc )
+            loss=np.mean(loss_list)
+
+            print 'fname :{} accuracy : {}'.format(fname , acc)
+            print 'fname :{} accuracy : {}'.format(fname, loss)
+
             if idx_global==0:
                 pred_global=pred_list
                 label_global=labs_list
             else:
                 pred_global=np.hstack((pred_global,pred_list))
                 label_global=np.hstack((label_global , labs_list))
+
         global_acc = np.mean(np.equal(pred_global, label_global))
-        print np.shape(global_acc )
+        global_loss = np.mean(label_global)
+        print 'total accuracy : ', global_acc
+        print 'total loss : ' , global_loss
+
         acc_global=np.mean(global_acc )
-        print 'total accuracy : ',global_acc
+        summary = tf.Summary(value=[tf.Summary.Value(tag='loss_%s' % 'test', simple_value=float(loss)),
+                                    tf.Summary.Value(tag='accuracy_%s' % 'test', simple_value=float(acc_global))])
+        self.summary_writer.add_summary(summary)
+
+
         if pred_global_acc > global_acc:
             global_acc=pred_global_acc
             self.saver.save(sess=self.sess, save_path='./model/global_acc_{}.ckpt'.format(global_acc))
