@@ -68,6 +68,7 @@ for i in range(args.n_epoch):
     try:
         tf.train.get_checkpoint_state('./model')
         densenet.load_model(mode='last')
+        print 'load model'
     except ValueError as e :
         print 'there is no model to restroe , so make model'
         acc=0
