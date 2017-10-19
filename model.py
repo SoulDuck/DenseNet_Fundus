@@ -284,6 +284,15 @@ class DenseNet:
 
         self.accuracy = tf.reduce_mean(tf.cast(self.correct_prediction , dtype = tf.float32))
 
+    def load_model(self , mode):
+        assert mode == 'accuraacy' or mode =='last'
+        try :
+            tf.train.get_checkpoint_state('./model')
+        except ValueError as ve:
+            if mode == 'last':
+                self.saver.restore(sess=self.sess , save_path='./model')
+            elif mode == 'last':
+                raise NotImplementedError
 
     def training(self  , learning_rate):
 
@@ -310,7 +319,7 @@ class DenseNet:
         self.coord.request_stop()
         self.coord.join(threads=self.threads)
 
-    def testing(self):
+    def testing(self , pred_global_acc):
         #cataract , normal 각각의 accuracy을 보여주고 마지막엔 모두를 더한 total accuracy을 보여준다
         acc_global=[]
         pred_global=[]
@@ -352,6 +361,12 @@ class DenseNet:
         print np.shape(global_acc )
         acc_global=np.mean(global_acc )
         print 'total accuracy : ',global_acc
+        if pred_global_acc > global_acc:
+            global_acc=pred_global_acc
+            self.saver.save(sess=self.sess, save_path='./model/global_acc_{}.ckpt'.format(global_acc))
+        self.saver.save(sess=self.sess, save_path='./model/last_model.ckpt')
+        return global_acc
+
     #self._images_test_list, self._labels_test_list, self._fnames_test_list
 
 

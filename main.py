@@ -2,7 +2,7 @@
 import input as input
 import argparse
 import model
-
+import tensorflow as tf
 parser  = argparse.ArgumentParser()
 parser.add_argument('--train' , dest='mode',action='store_true' , help='Train the model')
 parser.add_argument('--test' , dest='mode',action='store_true')
@@ -51,25 +51,33 @@ src_folder_names=['normal_0' , 'normal_1','glaucoma', 'cataract', 'retina','reti
 src_labels=[1,1,0,0,0,0,0,0]
 input.make_fundus_tfrecords(root_folder='../fundus_data/cropped_original_fundus_300x300' , src_folder_names=src_folder_names , src_labels=src_labels , save_folder='./dataset')
 
-model_params = vars(args)
-densenet=model.DenseNet(**model_params)
-densenet.testing()
-densenet.training(learning_rate=0.01) #100에 한번씩 test을 한다
-densenet.testing()
-densenet.training(learning_rate=0.001) #100에 한번씩 test을 한다
-densenet.testing()
-densenet.training(learning_rate=0.001) #100에 한번씩 test을 한다
-densenet.testing()
-densenet.training(learning_rate=0.001) #100에 한번씩 test을 한다
-densenet.testing()
-densenet.training(learning_rate=0.001) #100에 한번씩 test을 한다
-densenet.testing()
-densenet.training(learning_rate=0.001) #100에 한번씩 test을 한다
-densenet.testing()
-densenet.training(learning_rate=0.001) #100에 한번씩 test을 한다
-densenet.testing()
-densenet.training(learning_rate=0.001) #100에 한번씩 test을 한다
-densenet.testing()
-densenet.training(learning_rate=0.001) #100에 한번씩 test을 한다
-densenet.testing()
-densenet.training(learning_rate=0.001) #100에 한번씩 test을 한다
+
+for i in range(args.n_epoch):
+    try:
+        tf.trani.get_checkpoint_state('./model')
+    except ValueError as e :
+        print 'there is no model to restroe , so make model'
+
+    #이렇게 해놓은 것은 414번째에서 OutOfRange에러가 normal에서 나는데 해결 방법을 찾지 못했기 때문이다
+    #그래서 queue가 다 떯어지면 새로운 Queue을 만들기 위해 다시 그래프를 생성한다 .
+    #그리고 저장해 놓은 것들중에 다시 시작하기 위해서 그래프를 새로 생성한다
+    #tensorflow 의 queue형태와 데이터를 집어넣는 형태에 대해서 공부해야한다
+
+    """
+    2가지 타입으로 모델을 훈련 시킬수 있다 하나는 최근 모델을 따라가며 기본적인 것들과 
+    다른 하나는 최고의 accuracy 을 따라가는 것들 2가지가 있다 
+    일단 통상적인 것들로 실험을 진행해보자
+    """
+    model_params = vars(args)
+    densenet=model.DenseNet(**model_params)
+
+    densenet.testing()
+    densenet.training(learning_rate=0.01) #100에 한번씩 test을 한다
+    densenet.testing()
+    densenet.training(learning_rate=0.001) #100에 한번씩 test을 한다
+    densenet.testing()
+    densenet.training(learning_rate=0.001) #100에 한번씩 test을 한다
+    densenet.testing()
+    densenet.training(learning_rate=0.001) #100에 한번씩 test을 한다
+    densenet.testing()
+    tf.reset_default_graph()
