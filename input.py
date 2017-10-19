@@ -227,7 +227,7 @@ def read_one_example( tfrecord_path , batch_size , resize ):
 
 def get_batch( tfrecord_path , batch_size , resize  , mode , num_epoch):
     resize_height , resize_width  = resize
-    filename_queue = tf.train.string_input_producer(tfrecord_path , num_epochs=num_epochk)
+    filename_queue = tf.train.string_input_producer(tfrecord_path , num_epochs=num_epoch)
     reader = tf.TFRecordReader()
     _ , serialized_example = reader.read(filename_queue)
     features = tf.parse_single_example(serialized_example,
