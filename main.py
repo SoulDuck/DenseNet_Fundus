@@ -51,7 +51,7 @@ src_folder_names=['normal_0' , 'normal_1','glaucoma', 'cataract', 'retina','reti
 src_labels=[1,1,0,0,0,0,0,0]
 input.make_fundus_tfrecords(root_folder='../fundus_data/cropped_original_fundus_300x300' , src_folder_names=src_folder_names , src_labels=src_labels , save_folder='./dataset')
 
-
+acc=0
 for i in range(args.n_epoch):
     #이렇게 해놓은 것은 414번째에서 OutOfRange에러가 normal에서 나는데 해결 방법을 찾지 못했기 때문이다
     #그래서 queue가 다 떯어지면 새로운 Queue을 만들기 위해 다시 그래프를 생성한다 .
@@ -73,11 +73,11 @@ for i in range(args.n_epoch):
         acc=0
     acc=densenet.testing(acc)
     densenet.training(learning_rate=0.01) #100에 한번씩 test을 한다
-    densenet.testing(acc)
+    acc=densenet.testing(acc)
     densenet.training(learning_rate=0.001) #100에 한번씩 test을 한다
-    densenet.testing(acc)
+    acc=densenet.testing(acc)
     densenet.training(learning_rate=0.001) #100에 한번씩 test을 한다
-    densenet.testing(acc)
+    acc=densenet.testing(acc)
     densenet.training(learning_rate=0.001) #100에 한번씩 test을 한다
-    densenet.testing(acc)
+    acc=densenet.testing(acc)
     tf.reset_default_graph()
