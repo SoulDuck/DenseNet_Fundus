@@ -12,7 +12,7 @@ class DenseNet:
     def __init__(self, growth_rate, depth,
                  total_blocks, keep_prob,
                  weight_decay, nesterov_momentum, model_type, dataset,
-                 should_save_logs, should_save_model,
+                 should_save_logs, should_save_model, n_epoch,
                  renew_logs=False,
                  reduction=1.0,
                  bc_mode=False,
@@ -28,7 +28,7 @@ class DenseNet:
         self.n_classes = n_classes
         self.data_shape =data_shape
 
-
+        self.n_epoch=n_epoch
         self.growth_rate = growth_rate
         self.depth = depth
         self.total_blocks = total_blocks

@@ -299,7 +299,7 @@ def cls_to_onehot(indices,cls, n_classes):
 """
 
 
-def get_batch_tensor(mode):
+def get_batch_tensor(mode , n_epoch=None):
     """
 
     아래 줄이 반드시 정의 되어 있어야 합니다
@@ -312,25 +312,24 @@ def get_batch_tensor(mode):
     coord.join(threads)
     이 정의되어 있어야 합니다
     """
-    n_epoch=100
+    if n_epoch == None:
+        n_epoch=100
+        print 'default n_epoch {}'.format(100)
     fetches = ['normal_0', 'glaucoma', 'retina', 'cataract', 'cataract_glaucoma', 'retina_cataract',
                    'retina_glaucoma']
-
-    epochs= [2*n_epoch,1*n_epoch,3*n_epoch,4*n_epoch,41*n_epoch,30*n_epoch,11*n_epoch]
     if mode=='train' or mode == 'Train':
         fetches=map(lambda fetch : fetch +'_train' ,fetches)
+        epochs = [2 * n_epoch, 1 * n_epoch, 3 * n_epoch, 4 * n_epoch, 41 * n_epoch, 30 * n_epoch, 11 * n_epoch]
+        batches = [30, 14, 14, 6, 4, 3, 3]
+        assert len(fetches) == len(batches) ==len(epochs)
     elif mode == 'test' or mode == 'Test':
         fetches=map(lambda fetch: fetch +'_test', fetches)
-    batches=[30,14,14,6,4,3,3]
-    assert len(fetches) == len(batches)
-
-    fbe=zip(fetches , batches , epochs)
     images_list=[]
     labels_list=[]
     filenames_list=[]
 
-    for f, b , e  in fbe:
-        print 'name:', f, '\tbatch:', b
+    for f in enumerate(fetches):
+        print 'name:', f, '\tbatch:', batches[i]
         tfrecord_path = tf.gfile.Glob('./dataset' + '/%s.tfrecord' % f)
         #Glob을쓰는이유는 이렇게 해야 tensor가 인식을 한다
         #Glob의 원래 목적은 정규식 패턴에 해당하는 파일을 모두 찾아 반환하는 거지만  여기서는 그냥 하나의 파일을 찾기 위해 사용한다
@@ -339,8 +338,8 @@ def get_batch_tensor(mode):
             print 'tfrecord path : ',tfrecord_path
 
         if mode == 'train' or mode == 'Train':
-            images, labels, filenames = get_batch(tfrecord_path, batch_size=b, resize=(299, 299), mode=mode , num_epoch=e )
-            #images_list, labels_list, filenames_list  is list that was included tensor
+            images, labels, filenames = get_batch(tfrecord_path, batch_size=batches[i], \
+                                                  resize=(299, 299), mode=mode , num_epoch=epochs[i])
         elif mode == 'test' or mode == 'Test':
             tfrecord_path=tfrecord_path[0]
             print '####tfrecord_path',tfrecord_path[0]
@@ -380,7 +379,7 @@ for i in xrange(2):
 
 
 
-def get_batches_from_tensor(sess ,images , labels , filenames ):
+def get_batches_from_tensor(sess ,images , labels , filenames):
     imgs, labs, fnames = sess.run([images, labels, filenames])
     imgs_labs_fnames=zip(imgs,labs ,fnames)
     for i,(img,lab,fname) in enumerate(imgs_labs_fnames):
