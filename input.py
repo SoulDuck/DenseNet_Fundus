@@ -312,46 +312,44 @@ def get_batch_tensor(mode , n_epoch=None):
     coord.join(threads)
     이 정의되어 있어야 합니다
     """
-    if n_epoch == None:
-        n_epoch=100
-        print 'default n_epoch {}'.format(100)
     fetches = ['normal_0', 'glaucoma', 'retina', 'cataract', 'cataract_glaucoma', 'retina_cataract',
-                   'retina_glaucoma']
-    if mode=='train' or mode == 'Train':
+               'retina_glaucoma']
+    images_list=[];labels_list=[];filenames_list=[]
+    if mode == 'train' or mode == 'Train':
+        if n_epoch == None:
+            n_epoch=100
+            print 'default n_epoch {}'.format(100)
         fetches=map(lambda fetch : fetch +'_train' ,fetches)
         epochs = [2 * n_epoch, 1 * n_epoch, 3 * n_epoch, 4 * n_epoch, 41 * n_epoch, 30 * n_epoch, 11 * n_epoch]
         batches = [30, 14, 14, 6, 4, 3, 3]
         assert len(fetches) == len(batches) ==len(epochs)
+        for f in enumerate(fetches):
+            print 'name:', f, '\tbatch:', batches[i]
+            tfrecord_path = tf.gfile.Glob('./dataset' + '/%s.tfrecord' % f)
+            # Glob을쓰는이유는 이렇게 해야 tensor가 인식을 한다
+            # Glob의 원래 목적은 정규식 패턴에 해당하는 파일을 모두 찾아 반환하는 거지만  여기서는 그냥 하나의 파일을 찾기 위해 사용한다
+
+            if __debug__ == debug_lv0:
+                print 'tfrecord path : ', tfrecord_path
+                images, labels, filenames = get_batch(tfrecord_path, batch_size=batches[i], \
+                                                  resize=(299, 299), mode=mode, num_epoch=epochs[i])
+
     elif mode == 'test' or mode == 'Test':
         fetches=map(lambda fetch: fetch +'_test', fetches)
-    images_list=[]
-    labels_list=[]
-    filenames_list=[]
-
-    for f in enumerate(fetches):
-        print 'name:', f, '\tbatch:', batches[i]
-        tfrecord_path = tf.gfile.Glob('./dataset' + '/%s.tfrecord' % f)
-        #Glob을쓰는이유는 이렇게 해야 tensor가 인식을 한다
-        #Glob의 원래 목적은 정규식 패턴에 해당하는 파일을 모두 찾아 반환하는 거지만  여기서는 그냥 하나의 파일을 찾기 위해 사용한다
-
-        if __debug__ == debug_lv0:
-            print 'tfrecord path : ',tfrecord_path
-
-        if mode == 'train' or mode == 'Train':
-            images, labels, filenames = get_batch(tfrecord_path, batch_size=batches[i], \
-                                                  resize=(299, 299), mode=mode , num_epoch=epochs[i])
-        elif mode == 'test' or mode == 'Test':
-            tfrecord_path=tfrecord_path[0]
-            print '####tfrecord_path',tfrecord_path[0]
+        for f in enumerate(fetches):
+            print 'name:', f,
+            tfrecord_path = tf.gfile.Glob('./dataset' + '/%s.tfrecord' % f)
+            tfrecord_path=tfrecord_path[0] # [cataract.tfrecord]-->cataract.tfrecord
+            print '####tfrecord_path',tfrecord_path
             images, labels , filenames=reconstruct_tfrecord_rawdata(tfrecord_path,resize=(299, 299))
             if __debug__ == debug_lv0:
                 print 'image shape : ',np.shape(images)
                 print 'label shape : ', np.shape(labels)
                 print 'fname shape : ', len(filenames)
-        images_list.append(images)
-        labels_list.append(labels)
-        filenames_list.append(filenames)
-    print 'Done'
+            images_list.append(images)
+            labels_list.append(labels)
+            filenames_list.append(filenames)
+        print 'Done'
     return images_list, labels_list, filenames_list
 """
 for i in xrange(2):
