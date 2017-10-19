@@ -62,7 +62,8 @@ class DenseNet:
         self._build_graph()
         self.get_batches_from_tensor = input.get_batches_from_tensor
         self._images_test_list, self._labels_test_list, self._fnames_test_list = input.get_batch_tensor(mode='test')
-        self._images_tensor_list , self._labels_tensor_list,self._fnames_tensor_list=input.get_batch_tensor(mode='train')
+        self._images_tensor_list , self._labels_tensor_list,self._fnames_tensor_list=input.get_batch_tensor(mode='train' ,\
+                                                                                                            n_epoch = self.n_epoch)
 
 
         """**images_tensor_list=[imgs_1_tensor , imgs_2_tensor , imgs_3_tensor]**"""

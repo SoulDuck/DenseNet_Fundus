@@ -14,7 +14,7 @@ parser.add_argument('--weight_decay' , '-wd' , type=float , default=1e-4 , metav
 parser.add_argument('--nesterov_momentum' , '-nm' , type=float , default=0.9 , metavar='' )
 parser.add_argument('--model_type' , '-m' , type=str , choices=['DenseNet' , 'DenseNet-BC'] , default='DenseNet')
 parser.add_argument('--dataset', '-ds' , type=str , choices=['C10', 'C10+', 'C100' , 'C100+' , 'SVHN' , 'Fundus' ] , default='C10')
-
+parser.add_argument('--n_epoch' , type=int , default=100)
 parser.add_argument('--reduction' , '-red' , type=float , default=0.5  , metavar='')
 
 parser.add_argument('--logs', dest='should_save_logs' ,action='store_true')
