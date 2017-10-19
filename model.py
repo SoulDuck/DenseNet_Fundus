@@ -44,7 +44,6 @@ class DenseNet:
         self.renew_logs = renew_logs
         self.reduction = reduction
         self.bc_mode = bc_mode
-        self.step=0
         # compression rate at the transition layers
         if not bc_mode:
             print "Build %s model with %d blocks %d composite layers each" % (
@@ -300,7 +299,6 @@ class DenseNet:
         max_iter=100
 
         for step in range(max_iter):
-            self.step=step
             batch_xs ,batch_ys , batch_fs = self.get_batches_from_tensor(sess=self.sess  , images=self._images_tensor_list,\
                                                                          labels=self._labels_tensor_list , filenames=self._fnames_tensor_list )
             batch_ys=input.cls_to_onehot(batch_ys , self.n_classes )
@@ -321,11 +319,9 @@ class DenseNet:
         self.coord.request_stop()
         self.coord.join(threads=self.threads)
 
-    def testing(self , pred_global_acc):
+    def testing(self , pred_global_acc , global_step=None):
         #cataract , normal 각각의 accuracy을 보여주고 마지막엔 모두를 더한 total accuracy을 보여준다
-        acc_global=[]
         pred_global=[]
-        loss_global=[]
         label_global=[]
         imgs_labs_fnames_list=zip(self._images_test_list,self._labels_test_list,self._fnames_test_list)
 
@@ -350,7 +346,6 @@ class DenseNet:
                     self.is_training: False}
                 fetches = [self.prediction , self.cross_entropy]
                 pred, loss = self.sess.run(fetches=fetches, feed_dict=feed_dict)
-
                 if idx_local ==0:
                     pred_list=pred
                     loss_list=loss
@@ -363,10 +358,8 @@ class DenseNet:
             labs_list=np.argmax(labs_list , axis=1)
             acc=np.mean(np.equal(pred_list , labs_list))
             loss=np.mean(loss_list)
-
             print 'fname :{} accuracy : {}'.format(fname , acc)
             print 'fname :{} accuracy : {}'.format(fname, loss)
-
             if idx_global==0:
                 pred_global=pred_list
                 label_global=labs_list
@@ -382,7 +375,7 @@ class DenseNet:
         acc_global=np.mean(global_acc )
         summary = tf.Summary(value=[tf.Summary.Value(tag='loss_%s' % 'test', simple_value=float(loss)),
                                     tf.Summary.Value(tag='accuracy_%s' % 'test', simple_value=float(acc_global))])
-        self.summary_writer.add_summary(summary , global_step=self.step)
+        self.summary_writer.add_summary(summary , global_step=global_step)
 
 
         if pred_global_acc > global_acc:
@@ -390,7 +383,6 @@ class DenseNet:
             self.saver.save(sess=self.sess, save_path='./model/global_acc_{}.ckpt'.format(global_acc))
         self.saver.save(sess=self.sess, save_path='./model/last_model.ckpt')
         return global_acc
-
     #self._images_test_list, self._labels_test_list, self._fnames_test_list
 
 
