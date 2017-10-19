@@ -323,7 +323,7 @@ def get_batch_tensor(mode , n_epoch=None):
         epochs = [2 * n_epoch, 1 * n_epoch, 3 * n_epoch, 4 * n_epoch, 41 * n_epoch, 30 * n_epoch, 11 * n_epoch]
         batches = [30, 14, 14, 6, 4, 3, 3]
         assert len(fetches) == len(batches) ==len(epochs)
-        for f in enumerate(fetches):
+        for i,f in enumerate(fetches):
             print 'name:', f, '\tbatch:', batches[i]
             tfrecord_path = tf.gfile.Glob('./dataset' + '/%s.tfrecord' % f)
             # Glob을쓰는이유는 이렇게 해야 tensor가 인식을 한다
@@ -336,9 +336,9 @@ def get_batch_tensor(mode , n_epoch=None):
 
     elif mode == 'test' or mode == 'Test':
         fetches=map(lambda fetch: fetch +'_test', fetches)
-        for f in enumerate(fetches):
-            print 'name:', f,
-            tfrecord_path = tf.gfile.Glob('./dataset' + '/%s.tfrecord' % f)
+        for i,fetch in enumerate(fetches):
+            print 'name:', fetch,
+            tfrecord_path = tf.gfile.Glob('./dataset' + '/%s.tfrecord'%fetch)
             tfrecord_path=tfrecord_path[0] # [cataract.tfrecord]-->cataract.tfrecord
             print '####tfrecord_path',tfrecord_path
             images, labels , filenames=reconstruct_tfrecord_rawdata(tfrecord_path,resize=(299, 299))
