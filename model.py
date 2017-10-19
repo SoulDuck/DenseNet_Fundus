@@ -365,6 +365,7 @@ class DenseNet:
             print 'predict list shape : ',np.shape(pred_list)
             print 'loss list shape : ',np.shape(loss_list)
             pred_list=np.argmax(pred_list ,axis=1)
+            labs_list=np.argmax(labs_list , axis=1)
             acc=np.mean(np.equal(pred_list , labs_list))
             loss=np.mean(loss_list)
 
