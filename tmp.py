@@ -34,6 +34,14 @@ def reconstruct_tfrecord_rawdata(tfrecord_path):
 
     return ret_imgs, ret_labs ,ret_fnames
 
+imgs , labs , fnames=reconstruct_tfrecord_rawdata('./dataset/normal_0_train.tfrecord')
+print np.shape(imgs)
+imgs , labs , fnames=reconstruct_tfrecord_rawdata('./dataset/glaucoma_train.tfrecord')
+print np.shape(imgs)
+imgs , labs , fnames=reconstruct_tfrecord_rawdata('./dataset/retina.tfrecord')
+print np.shape(imgs)
+imgs , labs , fnames=reconstruct_tfrecord_rawdata('./dataset/cataract.tfrecord')
+print np.shape(imgs)
 imgs , labs , fnames=reconstruct_tfrecord_rawdata('./dataset/cataract_glaucoma_train.tfrecord')
 print np.shape(imgs)
 imgs , labs , fnames=reconstruct_tfrecord_rawdata('./dataset/retina_cataract_train.tfrecord')
