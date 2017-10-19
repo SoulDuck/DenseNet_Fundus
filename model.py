@@ -299,6 +299,7 @@ class DenseNet:
         max_iter=100
 
         for step in range(max_iter):
+            self.step=step
             batch_xs ,batch_ys , batch_fs = self.get_batches_from_tensor(sess=self.sess  , images=self._images_tensor_list,\
                                                                          labels=self._labels_tensor_list , filenames=self._fnames_tensor_list )
             batch_ys=input.cls_to_onehot(batch_ys , self.n_classes )
@@ -331,9 +332,6 @@ class DenseNet:
         #여기에는 cataract , glaucoam , retina test  image ,label , fnames가 들어있다
         for idx_global , (imgs_list , labs_list , fnames_list ) in enumerate(imgs_labs_fnames_list):
             labs_list = input.cls_to_onehot(labs_list, self.n_classes)
-
-
-
             imgs_labs_fnames_=zip(imgs_list , labs_list , fnames_list)
             print '# : ',len(imgs_labs_fnames_)
             for idx_local , (img , lab , fname )in enumerate(imgs_labs_fnames_):
@@ -344,10 +342,6 @@ class DenseNet:
                 h,w,c=np.shape(img)
                 img=img.reshape([1,h,w,c])
                 lab = lab.reshape([1, self.n_classes])
-
-
-
-
                 feed_dict = {
                     #self._images_tensor_list , self._labels_tensor_list , self._fnames_tensor_list
                     self.x_: img,
@@ -387,7 +381,7 @@ class DenseNet:
         acc_global=np.mean(global_acc )
         summary = tf.Summary(value=[tf.Summary.Value(tag='loss_%s' % 'test', simple_value=float(loss)),
                                     tf.Summary.Value(tag='accuracy_%s' % 'test', simple_value=float(acc_global))])
-        self.summary_writer.add_summary(summary)
+        self.summary_writer.add_summary(summary , global_step=self.step)
 
 
         if pred_global_acc > global_acc:
