@@ -227,7 +227,7 @@ def read_one_example( tfrecord_path , batch_size , resize ):
 
 def get_batch( tfrecord_path , batch_size , resize  , mode , num_epochs):
     resize_height , resize_width  = resize
-    filename_queue = tf.train.string_input_producer(tfrecord_path , num_epochs=100)
+    filename_queue = tf.train.string_input_producer(tfrecord_path , num_epochs=1000)
     reader = tf.TFRecordReader()
     _ , serialized_example = reader.read(filename_queue)
     features = tf.parse_single_example(serialized_example,
@@ -252,7 +252,7 @@ def get_batch( tfrecord_path , batch_size , resize  , mode , num_epochs):
                                            target_height=resize_height,
                                            target_width=resize_width)
     if mode == 'train':
-        images  , labels  , filenames= tf.train.shuffle_batch([image ,label ,filename] , batch_size =batch_size  , capacity =30000 ,num_threads=1 , min_after_dequeue=10)
+        images  , labels  , filenames= tf.train.shuffle_batch([image ,label ,filename] , batch_size =batch_size  , capacity =30000 ,num_threads=16 , min_after_dequeue=10)
         return images , labels , filenames
     if mode == 'test':
         pass
