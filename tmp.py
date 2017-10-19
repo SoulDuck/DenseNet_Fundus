@@ -40,7 +40,8 @@ imgs , labs , fnames=reconstruct_tfrecord_rawdata('./dataset/retina_cataract_tra
 print np.shape(imgs)
 imgs , labs , fnames=reconstruct_tfrecord_rawdata('./dataset/retina_glaucoma_train.tfrecord')
 print np.shape(imgs)
-
+imgs , labs , fnames=reconstruct_tfrecord_rawdata('./dataset/retina_train.tfrecord')
+print np.shape(imgs)
 
 a=np.asarray([[1,3],[2,4]])
 print np.argmax(a,axis=1)

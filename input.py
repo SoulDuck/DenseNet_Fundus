@@ -225,7 +225,7 @@ def read_one_example( tfrecord_path , batch_size , resize ):
     return image,label
 
 
-def get_batch( tfrecord_path , batch_size , resize  , mode):
+def get_batch( tfrecord_path , batch_size , resize  , mode , num_epochs):
     resize_height , resize_width  = resize
     filename_queue = tf.train.string_input_producer(tfrecord_path , num_epochs=100)
     reader = tf.TFRecordReader()
@@ -315,6 +315,7 @@ def get_batch_tensor(mode):
 
     fetches = ['normal_0', 'glaucoma', 'retina', 'cataract', 'cataract_glaucoma', 'retina_cataract',
                    'retina_glaucoma']
+    epochs=[10,]
     if mode=='train' or mode == 'Train':
         fetches=map(lambda fetch : fetch +'_train' ,fetches)
     elif mode == 'test' or mode == 'Test':
@@ -322,20 +323,22 @@ def get_batch_tensor(mode):
     batches=[30,14,14,6,4,3,3]
     assert len(fetches) == len(batches)
 
-    fb=zip(fetches , batches)
+    fbe=zip(fetches , batches , epochs)
     images_list=[]
     labels_list=[]
     filenames_list=[]
 
-    for f, b in fb:
+    for f, b , e  in fbe:
         print 'name:', f, '\tbatch:', b
         tfrecord_path = tf.gfile.Glob('./dataset' + '/%s.tfrecord' % f)
         #Glob을쓰는이유는 이렇게 해야 tensor가 인식을 한다
+        #Glob의 원래 목적은 정규식 패턴에 해당하는 파일을 모두 찾아 반환하는 거지만  여기서는 그냥 하나의 파일을 찾기 위해 사용한다
+
         if __debug__ == debug_lv0:
             print 'tfrecord path : ',tfrecord_path
 
         if mode == 'train' or mode == 'Train':
-            images, labels, filenames = get_batch(tfrecord_path, batch_size=b, resize=(299, 299), mode=mode)
+            images, labels, filenames = get_batch(tfrecord_path, batch_size=b, resize=(299, 299), mode=mode , num_epochs=e )
             #images_list, labels_list, filenames_list  is list that was included tensor
         elif mode == 'test' or mode == 'Test':
             tfrecord_path=tfrecord_path[0]
