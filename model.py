@@ -341,6 +341,7 @@ class DenseNet:
                 feed_dict = {
                     #self._images_tensor_list , self._labels_tensor_list , self._fnames_tensor_list
                     self.x_: img,
+                    self.y_: lab,
                     self.is_training: False}
                 fetches = [self.prediction , self.cross_entropy]
                 pred, loss = self.sess.run(fetches=fetches, feed_dict=feed_dict)
