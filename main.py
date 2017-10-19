@@ -70,13 +70,14 @@ for i in range(args.n_epoch):
         densenet.load_model(mode='last')
     except ValueError as e :
         print 'there is no model to restroe , so make model'
-    densenet.testing()
+        acc=0
+    acc=densenet.testing(acc)
     densenet.training(learning_rate=0.01) #100에 한번씩 test을 한다
-    densenet.testing()
+    densenet.testing(acc)
     densenet.training(learning_rate=0.001) #100에 한번씩 test을 한다
-    densenet.testing()
+    densenet.testing(acc)
     densenet.training(learning_rate=0.001) #100에 한번씩 test을 한다
-    densenet.testing()
+    densenet.testing(acc)
     densenet.training(learning_rate=0.001) #100에 한번씩 test을 한다
-    densenet.testing()
+    densenet.testing(acc)
     tf.reset_default_graph()
