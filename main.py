@@ -58,4 +58,18 @@ densenet.training(learning_rate=0.01) #100에 한번씩 test을 한다
 densenet.testing()
 densenet.training(learning_rate=0.001) #100에 한번씩 test을 한다
 densenet.testing()
-
+densenet.training(learning_rate=0.001) #100에 한번씩 test을 한다
+densenet.testing()
+densenet.training(learning_rate=0.001) #100에 한번씩 test을 한다
+densenet.testing()
+densenet.training(learning_rate=0.001) #100에 한번씩 test을 한다
+densenet.testing()
+densenet.training(learning_rate=0.001) #100에 한번씩 test을 한다
+densenet.testing()
+densenet.training(learning_rate=0.001) #100에 한번씩 test을 한다
+densenet.testing()
+densenet.training(learning_rate=0.001) #100에 한번씩 test을 한다
+densenet.testing()
+densenet.training(learning_rate=0.001) #100에 한번씩 test을 한다
+densenet.testing()
+densenet.training(learning_rate=0.001) #100에 한번씩 test을 한다
