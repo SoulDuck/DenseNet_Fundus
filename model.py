@@ -319,6 +319,8 @@ class DenseNet:
             imgs_labs_fnames_=zip(imgs_list , labs_list , fnames_list)
             print '# : ',len(imgs_labs_fnames_)
             for idx_local , (img , lab , fname )in enumerate(imgs_labs_fnames_):
+                if np.max(img) >1 :
+                    img=img/255.
                 h,w,c=np.shape(img)
                 img=img.reshape([1,h,w,c])
                 feed_dict = {
