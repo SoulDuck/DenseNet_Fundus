@@ -331,8 +331,8 @@ class DenseNet:
         #여기에는 cataract , glaucoam , retina test  image ,label , fnames가 들어있다
         for idx_global , (imgs_list , labs_list , fnames_list ) in enumerate(imgs_labs_fnames_list):
             lab_list = input.cls_to_onehot(labs_list, self.n_classes)
-            print np.shape(lab_list)
-            exit()
+
+
             imgs_labs_fnames_=zip(imgs_list , labs_list , fnames_list)
             print '# : ',len(imgs_labs_fnames_)
             for idx_local , (img , lab , fname )in enumerate(imgs_labs_fnames_):
@@ -342,7 +342,11 @@ class DenseNet:
                         print 'max : ', np.max(img)
                 h,w,c=np.shape(img)
                 img=img.reshape([1,h,w,c])
-                print np.shape(lab)
+                print lab
+                lab = lab.reshape([1, self.n_classes])
+                print lab
+                exit()
+
 
                 feed_dict = {
                     #self._images_tensor_list , self._labels_tensor_list , self._fnames_tensor_list
