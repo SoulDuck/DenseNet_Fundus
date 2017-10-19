@@ -332,8 +332,11 @@ def get_batch_tensor(mode , n_epoch=None):
             if __debug__ == debug_lv0:
                 print 'tfrecord path : ', tfrecord_path
 
-                images, labels, filenames = get_batch(tfrecord_path, batch_size=batches[i], \
+            images, labels, filenames = get_batch(tfrecord_path, batch_size=batches[i], \
                                                   resize=(299, 299), mode=mode, num_epoch=epochs[i])
+            images_list.append(images)
+            labels_list.append(labels)
+            filenames_list.append(filenames)
 
     elif mode == 'test' or mode == 'Test':
         fetches=map(lambda fetch: fetch +'_test', fetches)
