@@ -385,6 +385,7 @@ def get_batches_from_tensor(sess ,images , labels , filenames):
 
     imgs_labs_fnames=zip(imgs,labs ,fnames)
     for i,(img,lab,fname) in enumerate(imgs_labs_fnames):
+        print i
         if i ==0 :
             tmp_imgs = img
             tmp_labs = lab
