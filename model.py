@@ -331,7 +331,7 @@ class DenseNet:
         #여기에는 cataract , glaucoam , retina test  image ,label , fnames가 들어있다
         for idx_global , (imgs_list , labs_list , fnames_list ) in enumerate(imgs_labs_fnames_list):
             lab_list = input.cls_to_onehot(labs_list, self.n_classes)
-
+            print np.shape(lab_list)
 
             imgs_labs_fnames_=zip(imgs_list , labs_list , fnames_list)
             print '# : ',len(imgs_labs_fnames_)
