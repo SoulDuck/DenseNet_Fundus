@@ -379,7 +379,7 @@ for i in xrange(2):
 
 
 def get_batches_from_tensor(sess ,images , labels , filenames):
-    print labels
+    print 'labels',labels
 
     imgs, labs, fnames = sess.run([images, labels, filenames])
 
