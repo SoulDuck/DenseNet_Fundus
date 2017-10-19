@@ -44,6 +44,7 @@ class DenseNet:
         self.renew_logs = renew_logs
         self.reduction = reduction
         self.bc_mode = bc_mode
+        self.step=0
         # compression rate at the transition layers
         if not bc_mode:
             print "Build %s model with %d blocks %d composite layers each" % (
@@ -299,6 +300,7 @@ class DenseNet:
         max_iter=100
 
         for step in range(max_iter):
+            self.step+=1
             batch_xs ,batch_ys , batch_fs = self.get_batches_from_tensor(sess=self.sess  , images=self._images_tensor_list,\
                                                                          labels=self._labels_tensor_list , filenames=self._fnames_tensor_list )
             batch_ys=input.cls_to_onehot(batch_ys , self.n_classes )
@@ -315,7 +317,7 @@ class DenseNet:
                 self.is_training: True}
             fetches = [self.train_step, self.cross_entropy, self.accuracy]
             _ , loss, accuracy=self.sess.run(fetches=fetches, feed_dict=feed_dict)
-            self.log_loss_accuracy(loss=loss , accuracy=accuracy ,epoch = step, prefix='per_batch')
+            self.log_loss_accuracy(loss=loss , accuracy=accuracy ,epoch = self.step, prefix='per_batch')
         self.coord.request_stop()
         self.coord.join(threads=self.threads)
 
