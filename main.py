@@ -53,11 +53,6 @@ input.make_fundus_tfrecords(root_folder='../fundus_data/cropped_original_fundus_
 
 
 for i in range(args.n_epoch):
-    try:
-        tf.trani.get_checkpoint_state('./model')
-    except ValueError as e :
-        print 'there is no model to restroe , so make model'
-
     #이렇게 해놓은 것은 414번째에서 OutOfRange에러가 normal에서 나는데 해결 방법을 찾지 못했기 때문이다
     #그래서 queue가 다 떯어지면 새로운 Queue을 만들기 위해 다시 그래프를 생성한다 .
     #그리고 저장해 놓은 것들중에 다시 시작하기 위해서 그래프를 새로 생성한다
@@ -70,7 +65,11 @@ for i in range(args.n_epoch):
     """
     model_params = vars(args)
     densenet=model.DenseNet(**model_params)
-
+    try:
+        tf.train.get_checkpoint_state('./model')
+        densenet.load_model(mode='last')
+    except ValueError as e :
+        print 'there is no model to restroe , so make model'
     densenet.testing()
     densenet.training(learning_rate=0.01) #100에 한번씩 test을 한다
     densenet.testing()
