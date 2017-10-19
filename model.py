@@ -44,6 +44,7 @@ class DenseNet:
         self.renew_logs = renew_logs
         self.reduction = reduction
         self.bc_mode = bc_mode
+        self.step=0
         # compression rate at the transition layers
         if not bc_mode:
             print "Build %s model with %d blocks %d composite layers each" % (
